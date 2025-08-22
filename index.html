@@ -3,12 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#1a2a6c">
-    <meta name="description" content="تطبيق للاستماع إلى الإذاعات القرآنية من مختلف أنحاء العالم الإسلامي">
     <title>مشغل الإذاعات القرآنية</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="manifest" id="app-manifest">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📻</text></svg>">
     <style>
         * {
             box-sizing: border-box;
@@ -50,30 +46,6 @@
             font-size: 1.2rem;
             margin-bottom: 20px;
             color: #e0e0e0;
-        }
-        
-        .install-btn {
-            background: #2e7d32;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: bold;
-            display: inline-flex;
-            align-items: center;
-            margin-top: 10px;
-            transition: all 0.3s ease;
-        }
-        
-        .install-btn:hover {
-            background: #3d8b40;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        
-        .install-btn i {
-            margin-left: 8px;
         }
         
         .player-container {
@@ -472,32 +444,6 @@
             transition: width 0.3s ease;
         }
         
-        .pwa-install-alert {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            background: #1a2a6c;
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            display: none;
-            z-index: 1001;
-            text-align: center;
-        }
-        
-        .pwa-install-alert button {
-            background: #fdbb2d;
-            color: #1a2a6c;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            margin: 0 5px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.1); }
@@ -548,9 +494,6 @@
         <header>
             <h1>مشغل الإذاعات القرآنية</h1>
             <p class="description">استمع إلى أجمل الإذاعات القرآنية من مختلف أنحاء العالم الإسلامي</p>
-            <button class="install-btn" id="install-btn" style="display: none;">
-                <i class="fas fa-download"></i> تثبيت التطبيق
-            </button>
         </header>
         
         <div class="player-container">
@@ -723,91 +666,66 @@
         تم حفظ التغييرات بنجاح!
     </div>
 
-    <div class="pwa-install-alert" id="pwa-install-alert">
-        <p>تثبيت تطبيق الإذاعات القرآنية لتجربة أفضل</p>
-        <div>
-            <button id="pwa-install-confirm">تثبيت</button>
-            <button id="pwa-install-cancel">لاحقاً</button>
-        </div>
-    </div>
-
     <script>
-        // بيانات الإذاعات الافتراضية
+        // بيانات الإذاعات الافتراضية (من الروابط التي قدمتها)
         const defaultStations = [
             {
                 name: "إذاعة القرآن الكريم من القاهرة",
                 description: "أشهر إذاعة قرآنية في العالم الإسلامي",
                 url: "https://Qurango.net/radio/tarateel",
-                thumb: "",
-                status: "active"
+                thumb: "https://tilawah.net/storage/stations/01JJY6EY9GZWYWX5YBZZY1HMB4.jpg",
+                status: "inactive"
             },
             {
                 name: "إذاعة القرآن الكريم من السعودية",
                 description: "الإذاعة الرسمية للمملكة العربية السعودية",
                 url: "https://Qurango.net/radio/radio_saudi",
-                thumb: "",
+                thumb: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQ23iTExUL9eGD_I_Ckv8aFeKgmVynI8959A&s",
                 status: "active"
             },
             {
                 name: "إذاعة القرآن الكريم من الرياض",
                 description: "إذاعة القرآن الكريم من العاصمة السعودية الرياض",
                 url: "https://Qurango.net/radio/riyadh",
-                thumb: "",
+                thumb: "https://www.almowaten.net/wp-content/uploads/21453.jpg",
                 status: "active"
             },
             {
-                name: "إذاعة القرآن الكريم من المدينة",
-                description: "إذاعة القرآن الكريم من المدينة المنورة",
-                url: "https://Qurango.net/radio/almadinah",
-                thumb: "",
+                name: "مباشرة من مكة",
+                description: "إذاعة القرآن الكريم من السعودية",
+                url: "https://n0a.radiojar.com/4wqre23fytzuv?rj-ttl=5&rj-tok=AAABmM4nwrYA3E_8aFeiJDe0AQ",
+                thumb: "https://islamicbulletin.org/wp-content/uploads/QuranMakkah.jpg",
                 status: "active"
             },
             {
-                name: "إذاعة القرآن الكريم من مكة",
-                description: "إذاعة القرآن الكريم من مكة المكرمة",
-                url: "https://Qurango.net/radio/makkah",
-                thumb: "",
+                name: "إذاعة المجد",
+                description: "إذاعة المجد للقرآن الكريم",
+                url: "http://r1.tarat.com:8196/stream?type=http&nocache=31",
+                thumb: "https://tilawah.net/storage/stations/01JJY7369FJC0FQ9CER86F3VD4.jpg",
                 status: "active"
             },
             {
-                name: "إذاعة القرآن الكريم من قطر",
-                description: "الإذاعة الرسمية لدولة قطر",
-                url: "https://Qurango.net/radio/quran_radio",
-                thumb: "",
+                name: "إذاعة الشيخ عبد الباسط",
+                description: "\" إذاعة الشيخ عبد الباسط برواية ورش \"",
+                url: "https://server03.quran-uni.com:7125/;*.mp3",
+                thumb: "https://guidetoquran.com/media/screenshot-2025-01-11-1704522002_showWebsiteThumb.png",
                 status: "active"
             },
             {
-                name: "إذاعة القرآن الكريم من الكويت",
-                description: "الإذاعة الرسمية لدولة الكويت",
-                url: "https://Qurango.net/radio/kuwait",
-                thumb: "",
+                name: "إذاعة نابلس للقرآن الكريم",
+                description: "دعوة و رباط",
+                url: "https://quran-radio.org:8443/;?type=http&amp;nocache=13",
+                thumb: "https://quran-radio.com/storage/sliders/17291776305.jpg",
+                status: "active"
+            },
+            {
+                name: "إذاعة زين بلادي",
+                description: "البث المباشر  إذاعة زين بلادي للقرآن الكريم",
+                url: "https://www.zinebladi.ma/radio.php",
+                thumb: "https://www.zinebladi.ma/images/global-logo.svg",
                 status: "active"
             }
         ];
-
-        // إنشاء Manifest ديناميكيًا لتطبيق PWA
-        const manifest = {
-            "name": "مشغل الإذاعات القرآنية",
-            "short_name": "الإذاعات القرآنية",
-            "description": "تطبيق للاستماع إلى الإذاعات القرآنية من مختلف أنحاء العالم الإسلامي",
-            "start_url": ".",
-            "display": "standalone",
-            "background_color": "#1a2a6c",
-            "theme_color": "#fdbb2d",
-            "orientation": "any",
-            "icons": [
-                {
-                    "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48dGV4dCB5PSIuOWVtIiBmb250LXNpemU9IjkwIiB4PSI1MCUiIGR5PSIuOWVtIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wn5GrPC90ZXh0Pjwvc3ZnPg==",
-                    "sizes": "100x100",
-                    "type": "image/svg+xml"
-                }
-            ]
-        };
-
-        // إنشاء Manifest وتطبيقه
-        const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-        const manifestURL = URL.createObjectURL(manifestBlob);
-        document.getElementById('app-manifest').href = manifestURL;
 
         // عناصر DOM
         const audioPlayer = document.getElementById('audio-player');
@@ -821,7 +739,6 @@
         const exportBtn = document.getElementById('export-btn');
         const exportFileBtn = document.getElementById('export-file-btn');
         const resetBtn = document.getElementById('reset-btn');
-        const installBtn = document.getElementById('install-btn');
         const processDataBtn = document.getElementById('process-data-btn');
         const stationsContainer = document.getElementById('stations-container');
         const stationName = document.getElementById('current-station-name');
@@ -836,9 +753,6 @@
         const saveNotification = document.getElementById('save-notification');
         const progressBar = document.getElementById('progress-bar');
         const progress = document.getElementById('progress');
-        const pwaInstallAlert = document.getElementById('pwa-install-alert');
-        const pwaInstallConfirm = document.getElementById('pwa-install-confirm');
-        const pwaInstallCancel = document.getElementById('pwa-install-cancel');
         
         // عناصر النموذج
         const newStationName = document.getElementById('new-station-name');
@@ -859,7 +773,6 @@
         let currentFilter = 'all';
         let radioStations = [];
         let isImporting = false;
-        let deferredPrompt = null;
 
         // تهيئة المشغل
         function initPlayer() {
@@ -942,43 +855,6 @@
             
             // إنشاء بطاقات المحطات
             renderStationCards();
-            
-            // إعداد PWA
-            setupPWA();
-        }
-        
-        // إعداد PWA
-        function setupPWA() {
-            // حدث قبل تثبيت التطبيق
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                installBtn.style.display = 'flex';
-                
-                installBtn.addEventListener('click', () => {
-                    deferredPrompt.prompt();
-                    deferredPrompt.userChoice.then((choiceResult) => {
-                        if (choiceResult.outcome === 'accepted') {
-                            console.log('تم قبول تثبيت التطبيق');
-                        } else {
-                            console.log('تم رفض تثبيت التطبيق');
-                        }
-                        deferredPrompt = null;
-                    });
-                });
-            });
-            
-            // إظهار زر التثبيت إذا كان التطبيق غير مثبت
-            if (window.matchMedia('(display-mode: standalone)').matches) {
-                installBtn.style.display = 'none';
-            }
-            
-            // إعداد Service Worker للتخزين المؤقت
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('sw.js').catch(error => {
-                    console.log('فشل تسجيل Service Worker:', error);
-                });
-            }
         }
         
         // تحميل المحطة
@@ -999,6 +875,26 @@
             
             // معالجة الروابط غير المباشرة
             let audioUrl = station.url;
+            
+            // إذا كان الرابط يحتوي على معلمات خاصة مثل ;?icy=http
+            if (audioUrl.includes(';?')) {
+                // استخراج الجزء الأساسي من الرابط
+                const baseUrl = audioUrl.split(';?')[0];
+                audioUrl = baseUrl;
+                
+                // محاولة إضافة التنسيق المناسب
+                if (baseUrl.includes('://')) {
+                    // إذا كان الرابط يحتوي على بروتوكول
+                    const urlParts = baseUrl.split('://');
+                    const protocol = urlParts[0];
+                    const domainAndPath = urlParts[1];
+                    
+                    // إضافة التنسيق المناسب بناءً على نوع الخادم
+                    if (domainAndPath.includes(':') && !domainAndPath.includes('/stream')) {
+                        audioUrl = `${protocol}://${domainAndPath}/stream`;
+                    }
+                }
+            }
             
             audioPlayer.src = audioUrl;
             audioPlayer.load();
