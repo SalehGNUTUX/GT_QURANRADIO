@@ -5,11 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مشغل الإذاعات القرآنية</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- إضافة أيقونة التبويب -->
-    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📻</text></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📻</text></svg>">
-
     <style>
         * {
             box-sizing: border-box;
@@ -23,7 +18,7 @@
             color: #fff;
             min-height: 100vh;
             padding: 20px;
-            padding-bottom: 100px;
+            padding-bottom: 100px; /* مساحة للمشغل في الأسفل */
         }
 
         .container {
@@ -42,14 +37,14 @@
         }
 
         h1 {
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             margin-bottom: 10px;
             color: #fff;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         .description {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             margin-bottom: 20px;
             color: #e0e0e0;
         }
@@ -77,7 +72,7 @@
             position: fixed;
             top: 80px;
             left: 20px;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.8);
             border-radius: 15px;
             padding: 15px;
             z-index: 1000;
@@ -87,7 +82,6 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(10px);
             min-width: 200px;
-            border: 1px solid rgba(253, 187, 45, 0.3);
         }
 
         .actions-menu.show {
@@ -97,15 +91,14 @@
         .actions-menu .btn {
             width: 100%;
             justify-content: flex-start;
-            margin-bottom: 5px;
         }
 
         /* المشغل الثابت في الأسفل */
         .player-container {
-            background: rgba(0, 0, 0, 0.95);
+            background: rgba(0, 0, 0, 0.9);
             border-radius: 15px 15px 0 0;
             padding: 15px;
-            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.3);
             position: fixed;
             bottom: 0;
             left: 0;
@@ -181,11 +174,6 @@
             justify-content: center;
             cursor: pointer;
             font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-
-        .minimize-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
         }
 
         .station-info {
@@ -204,7 +192,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 2px solid #fdbb2d;
         }
 
         .station-thumb i {
@@ -229,7 +216,6 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            color: #fdbb2d;
         }
 
         .station-desc {
@@ -245,7 +231,6 @@
             margin: 10px 0;
             border-radius: 5px;
             background: rgba(255, 255, 255, 0.1);
-            height: 40px;
         }
 
         .controls {
@@ -268,13 +253,12 @@
             display: flex;
             align-items: center;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
         .btn:hover {
             background: #ffcc44;
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .btn i {
@@ -317,10 +301,6 @@
             color: #fdbb2d;
         }
 
-        .volume-control input {
-            width: 100%;
-        }
-
         .stations-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -335,13 +315,11 @@
             transition: transform 0.3s ease;
             cursor: pointer;
             position: relative;
-            border: 1px solid rgba(253, 187, 45, 0.2);
         }
 
         .station-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            border-color: rgba(253, 187, 45, 0.5);
         }
 
         .station-card-thumb {
@@ -374,7 +352,6 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            color: #fdbb2d;
         }
 
         .station-card-desc {
@@ -399,7 +376,6 @@
             padding: 5px 10px;
             border-radius: 20px;
             font-size: 0.8rem;
-            backdrop-filter: blur(5px);
         }
 
         .status-active {
@@ -408,6 +384,30 @@
 
         .status-inactive {
             color: #f44336;
+        }
+
+        .filter-section {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: rgba(0, 0, 0, 0.4);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active {
+            background: #fdbb2d;
+            color: #1a2a6c;
+            font-weight: bold;
         }
 
         .refresh-section {
@@ -427,7 +427,6 @@
             padding: 20px;
             border-radius: 15px;
             margin-bottom: 30px;
-            border: 1px solid rgba(253, 187, 45, 0.3);
         }
 
         .add-station-form {
@@ -438,14 +437,12 @@
 
         .form-group {
             margin-bottom: 15px;
-            position: relative;
         }
 
         .form-group label {
             display: block;
             margin-bottom: 5px;
             color: #fdbb2d;
-            font-weight: bold;
         }
 
         .form-group input, .form-group select, .form-group textarea {
@@ -455,12 +452,10 @@
             border: none;
             background: rgba(255, 255, 255, 0.1);
             color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
             outline: 2px solid #fdbb2d;
-            background: rgba(255, 255, 255, 0.15);
         }
 
         .form-submit {
@@ -490,7 +485,6 @@
             max-width: 500px;
             max-height: 90vh;
             overflow-y: auto;
-            border: 2px solid #fdbb2d;
         }
 
         .modal-header {
@@ -498,8 +492,6 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            border-bottom: 1px solid #fdbb2d;
-            padding-bottom: 10px;
         }
 
         .close-modal {
@@ -508,11 +500,6 @@
             color: white;
             font-size: 1.5rem;
             cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .close-modal:hover {
-            color: #fdbb2d;
         }
 
         footer {
@@ -523,7 +510,6 @@
             border-radius: 10px;
             font-size: 1rem;
             line-height: 1.6;
-            border: 1px solid rgba(253, 187, 45, 0.2);
         }
 
         .love {
@@ -548,7 +534,6 @@
             border-radius: 5px;
             display: none;
             z-index: 1000;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
         .progress-bar {
@@ -582,14 +567,6 @@
 
             .container {
                 padding: 15px;
-            }
-
-            h1 {
-                font-size: 1.8rem;
-            }
-
-            .description {
-                font-size: 1rem;
             }
 
             .stations-grid {
@@ -643,6 +620,11 @@
                 grid-column: span 1;
             }
 
+            .filter-section {
+                flex-direction: column;
+                align-items: center;
+            }
+
             .player-container {
                 padding: 10px;
             }
@@ -679,10 +661,6 @@
                 top: 65px;
                 left: 15px;
                 min-width: 180px;
-            }
-
-            .modal-content {
-                padding: 20px;
             }
         }
     </style>
@@ -733,7 +711,7 @@
         </div>
 
         <div class="add-station-section">
-            <h2 style="text-align: center; margin-bottom: 20px; color: #fdbb2d;">إضافة إذاعة جديدة</h2>
+            <h2 style="text-align: center; margin-bottom: 20px;">إضافة إذاعة جديدة</h2>
             <div class="add-station-form">
                 <div class="form-group">
                     <label for="new-station-name">اسم الإذاعة</label>
@@ -870,65 +848,236 @@
     </div>
 
     <script>
-        // بيانات الإذاعات الافتراضية
-        const defaultStations = [
-            {
-                name: "إذاعة القرآن الكريم من القاهرة",
-                description: "أشهر إذاعة قرآنية في العالم الإسلامي",
-                url: "https://Qurango.net/radio/tarateel",
-                thumb: "https://tilawah.net/storage/stations/01JJY6EY9GZWYWX5YBZZY1HMB4.jpg",
-                status: "inactive"
-            },
-            {
-                name: "إذاعة القرآن الكريم من السعودية",
-                description: "الإذاعة الرسمية للمملكة العربية السعودية",
-                url: "https://Qurango.net/radio/radio_saudi",
-                thumb: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQ23iTExUL9eGD_I_Ckv8aFeKgmVynI8959A&s",
-                status: "active"
-            },
-            {
-                name: "إذاعة القرآن الكريم من الرياض",
-                description: "إذاعة القرآن الكريم من العاصمة السعودية الرياض",
-                url: "https://Qurango.net/radio/riyadh",
-                thumb: "https://www.almowaten.net/wp-content/uploads/21453.jpg",
-                status: "active"
-            },
-            {
-                name: "مباشرة من مكة",
-                description: "إذاعة القرآن الكريم من السعودية",
-                url: "https://n0a.radiojar.com/4wqre23fytzuv?rj-ttl=5&rj-tok=AAABmM4nwrYA3E_8aFeiJDe0AQ",
-                thumb: "https://islamicbulletin.org/wp-content/uploads/QuranMakkah.jpg",
-                status: "active"
-            },
-            {
-                name: "إذاعة المجد",
-                description: "إذاعة المجد للقرآن الكريم",
-                url: "http://r1.tarat.com:8196/stream?type=http&nocache=31",
-                thumb: "https://tilawah.net/storage/stations/01JJY7369FJC0FQ9CER86F3VD4.jpg",
-                status: "active"
-            },
-            {
-                name: "إذاعة الشيخ عبد الباسط",
-                description: "\" إذاعة الشيخ عبد الباسط برواية ورش \"",
-                url: "https://server03.quran-uni.com:7125/;*.mp3",
-                thumb: "https://guidetoquran.com/media/screenshot-2025-01-11-1704522002_showWebsiteThumb.png",
-                status: "active"
-            },
-            {
-                name: "إذاعة نابلس للقرآن الكريم",
-                description: "دعوة و رباط",
-                url: "https://quran-radio.org:8443/;?type=http&amp;nocache=13",
-                thumb: "https://quran-radio.com/storage/sliders/17291776305.jpg",
-                status: "active"
-            },
-            {
-                name: "إذاعة زين بلادي",
-                description: "البث المباشر  إذاعة زين بلادي للقرآن الكريم",
-                url: "https://www.zinebladi.ma/radio.php",
-                thumb: "https://www.zinebladi.ma/images/global-logo.svg",
-                status: "active"
-            }
-        ];
+        // بيانات الإذاعات الافتراضية (من الروابط التي قدمتها)
+       const defaultStations = [
+    {
+        name: "إذاعة القرآن الكريم من القاهرة",
+        description: "أشهر إذاعة قرآنية في العالم الإسلامي",
+        url: "https://Qurango.net/radio/tarateel",
+        thumb: "https://tilawah.net/storage/stations/01JJY6EY9GZWYWX5YBZZY1HMB4.jpg",
+        status: "inactive"
+    },
+    {
+        name: "إذاعة القرآن الكريم من السعودية",
+        description: "الإذاعة الرسمية للمملكة العربية السعودية",
+        url: "https://Qurango.net/radio/radio_saudi",
+        thumb: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQ23iTExUL9eGD_I_Ckv8aFeKgmVynI8959A&s",
+        status: "active"
+    },
+    {
+        name: "إذاعة القرآن الكريم من الرياض",
+        description: "إذاعة القرآن الكريم من العاصمة السعودية الرياض",
+        url: "https://Qurango.net/radio/riyadh",
+        thumb: "https://www.almowaten.net/wp-content/uploads/21453.jpg",
+        status: "active"
+    },
+    {
+        name: "مباشرة من مكة",
+        description: "إذاعة القرآن الكريم من السعودية",
+        url: "https://n0a.radiojar.com/4wqre23fytzuv?rj-ttl=5&rj-tok=AAABmM4nwrYA3E_8aFeiJDe0AQ",
+        thumb: "https://islamicbulletin.org/wp-content/uploads/QuranMakkah.jpg",
+        status: "active"
+    },
+    {
+        name: "إذاعة المجد",
+        description: "إذاعة المجد للقرآن الكريم",
+        url: "http://r1.tarat.com:8196/stream?type=http&nocache=31",
+        thumb: "https://tilawah.net/storage/stations/01JJY7369FJC0FQ9CER86F3VD4.jpg",
+        status: "active"
+    },
+    {
+        name: "إذاعة الشيخ عبد الباسط",
+        description: "إذاعة الشيخ عبد الباسط برواية ورش",
+        url: "https://server03.quran-uni.com:7125/;*.mp3",
+        thumb: "https://guidetoquran.com/media/screenshot-2025-01-11-1704522002_showWebsiteThumb.png",
+        status: "active"
+    },
+    {
+        name: "إذاعة نابلس للقرآن الكريم",
+        description: "دعوة و رباط",
+        url: "https://quran-radio.org:8443/;?type=http&amp;nocache=13",
+        thumb: "https://quran-radio.com/storage/sliders/17291776305.jpg",
+        status: "active"
+    },
+    {
+        name: "إذاعة زين بلادي",
+        description: "البث المباشر إذاعة زين بلادي للقرآن الكريم",
+        url: "https://www.zinebladi.ma/radio.php",
+        thumb: "https://www.zinebladi.ma/images/global-logo.svg",
+        status: "active"
+    },
+    {
+        name: "إذاعة السنة النبوية",
+        description: " السنة النبوية الشريفة",
+        url: "https://radiosunna.radioca.st/stream",
+        thumb: "https://www.radiosunna.com/uploads/6/6/1/7/6617650/editor/serene115.png",
+        status: "active"
+    },
+    {
+        name: "إذاعة الرقية الشرعية",
+        description: "تحصين البيت و النفس و الجسد",
+        url: "https://backup.qurango.net/radio/roqiah",
+        thumb: "https://i1.sndcdn.com/artworks-zygACgAd2NKwuohE-UF2Piw-t500x500.jpg",
+        status: "active"
+    },
+    {
+        name: "إذاعة تلاوات خاشعة",
+        description: "إذاعة للقرآن الكريم",
+        url: "https://backup.qurango.net/radio/salma",
+        thumb: "https://pbs.twimg.com/profile_images/1396812808659079169/5ft2haLD_400x400.jpg",
+        status: "active"
+    },
+    {
+        name: "إذاعة القرأن الكريم من القاهرة",
+        description: "إذاعة للقرآن الكريم",
+        url: "https://n0e.radiojar.com/8s5u5tpdtwzuv?rj-ttl=5&rj-tok=AAABjW7yROAA0TUU8cXhXIAi6g",
+        thumb: "https://apkdownmod.com/thumbnail?src=images/appsicon/2020/08/app-image-5f42ba68a61b1.jpg",
+        status: "active"
+    },
+    {
+        name: "المختصر في تفسير القرآن الكريم",
+        description: "إذاعة للقرآن الكريم",
+        url: "https://backup.qurango.net/radio/mukhtasartafsir",
+        thumb: "https://areejquran.net/wp-content/uploads/2015/12/unnamed.jpg",
+        status: "active"
+    },
+    {
+        name: "إذاعة تكبيرات العيد",
+        description: "إذاعة للقرآن الكريم",
+        url: "https://backup.qurango.net/radio/eid",
+        thumb: "https://i.pinimg.com/736x/3c/b3/fc/3cb3fc494b9f8332a7b7b3256e3d9822.jpg",
+        status: "active"
+    },
+    {
+        name: "إذاعة أبو بكر الشاطري",
+        description: "إذاعة للقرآن الكريم",
+        url: "https://backup.qurango.net/radio/shaik_abu_bakr_al_shatri",
+        thumb: "https://i1.sndcdn.com/artworks-000663801097-wb0y31-t200x200.jpg",
+        status: "active"
+    },
+    {
+        name: "إذاعة أحمد خضر الطرابلسي",
+        description: "إذاعة للقرآن الكريم",
+        url: "https://backup.qurango.net/radio/ahmad_khader_altarabulsi",
+        thumb: "https://i.pinimg.com/564x/d3/c2/9c/d3c29cc03198c3c15d380af048b2d68b.jpg",
+        status: "active"
+    },
+    {
+        name: "إذاعة إبراهيم الأخضر",
+        description: "إذاعة للقرآن الكريم",
+        url: "https://backup.qurango.net/radio/ibrahim_alakdar",
+        thumb: "https://static.suratmp3.com/pics/reciters/thumbs/44_600_600.jpg",
+        status: "active"
+    },
+    {
+        name: "إذاعة خالد الجليل",
+        description: "إذاعة للقرآن الكريم",
+        url: "https://backup.qurango.net/radio/khalid_aljileel",
+        thumb: "https://i1.sndcdn.com/avatars-ubX3f7yLm5eGyphJ-A4ysyA-t500x500.jpg",
+        status: "active"
+    },
+    {
+        name: "إذاعة صلاح الهاشم",
+        description: "إذاعة للقرآن الكريم",
+        url: "https://backup.qurango.net/radio/salah_alhashim",
+        thumb: "https://i.pinimg.com/564x/e9/22/1b/e9221b5ffd484937dc70c3eabe350c6f.jpg",
+        status: "active"
+    },
+    {
+        name: "إذاعة صلاح بو خاطر",
+        description: "إذاعة للقرآن الكريم",
+        url: "https://backup.qurango.net/radio/slaah_bukhatir",
+        thumb: "https://pbs.twimg.com/profile_images/1306502829251624960/uHKIJQpq_200x200.jpg",
+        status: "active"
+    },
+    {
+        name: "إذاعة عبدالباسط عبدالصمد",
+        description: "إذاعة للقرآن الكريم",
+        url: "https://backup.qurango.net/radio/abdulbasit_abdulsamad_mojawwad",
+        thumb: "https://cdns-images.dzcdn.net/images/talk/06b711ac6da4cde0eb698e244f5e27b8/300x300.jpg",
+        status: "active"
+    },
+    {
+        name: "إذاعة عبد العزيز سحيم",
+        description: "إذاعة للقرآن الكريم",
+        url: "https://backup.qurango.net/radio/a_sheim",
+        thumb: "https://i.pinimg.com/564x/a7/37/47/a73747375897de4897da372a0fd921a0.jpg",
+        status: "active"
+    },
+    {
+        name: "إذاعة فارس عباد",
+        description: "إذاعة للقرآن الكريم",
+        url: "https://backup.qurango.net/radio/fares_abbad",
+        thumb: "https://static.suratmp3.com/pics/reciters/thumbs/15_600_600.jpg",
+        status: "active"
+    },
+    {
+        name: "إذاعة ماهر المعيقلي",
+        description: "إذاعة للقرآن الكريم",
+        url: "https://backup.qurango.net/radio/maher",
+        thumb: "https://is1-ssl.mzstatic.com/image/thumb/Podcasts113/v4/4b/80/58/4b80582d-78ca-a466-0341-0869bc611745/mza_5280524847349008894.jpg/250x250bb.jpg",
+        status: "active"
+    },
+    {
+        name: "إذاعة محمد صديق المنشاوي",
+        description: "إذاعة للقرآن الكريم",
+        url: "https://backup.qurango.net/radio/mohammed_siddiq_alminshawi_mojawwad",
+        thumb: "https://i1.sndcdn.com/artworks-000284633237-7gdg9t-t200x200.jpg",
+        status: "active"
+    },
+    {
+        name: "إذاعة محمود خليل الحصري",
+        description: "إذاعة للقرآن الكريم",
+        url: "https://backup.qurango.net/radio/mahmoud_khalil_alhussary_mojawwad",
+        thumb: "https://watanimg.elwatannews.com/image_archive/original_lower_quality/18194265071637693809.jpg",
+        status: "active"
+    },
+    {
+        name: "إذاعة محمود علي البنا",
+        description: "إذاعة للقرآن الكريم",
+        url: "https://backup.qurango.net/radio/mahmoud_ali__albanna_mojawwad",
+        thumb: "https://i.pinimg.com/200x/29/67/b3/2967b3fbc1ce1f5a70874288d34317bf.jpg",
+        status: "active"
+    },
+    {
+        name: "إذاعة مشاري العفاسي",
+        description: "إذاعة للقرآن الكريم",
+        url: "https://backup.qurango.net/radio/mishary_alafasi",
+        thumb: "https://i1.sndcdn.com/artworks-000019055020-yr9cjc-t200x200.jpg",
+        status: "active"
+    },
+    {
+        name: "إذاعة ناصر القطامي",
+        description: "إذاعة للقرآن الكريم",
+        url: "https://backup.qurango.net/radio/nasser_alqatami",
+        thumb: "https://i1.sndcdn.com/artworks-000096282703-s9wldh-t200x200.jpg",
+        status: "active"
+    },
+    {
+        name: "إذاعة نبيل الرفاعي",
+        description: "إذاعة للقرآن الكريم",
+        url: "https://backup.qurango.net/radio/nabil_al_rifay",
+        thumb: "https://i1.sndcdn.com/artworks-000161140408-wh6nhw-t200x200.jpg",
+        status: "active"
+    },
+    {
+        name: "إذاعة هيثم الجدعاني",
+        description: "إذاعة للقرآن الكريم",
+        url: "https://backup.qurango.net/radio/hitham_aljadani",
+        thumb: "https://ar.islamway.net/uploads/authors/3948.jpg",
+        status: "active"
+    },
+    {
+        name: "إذاعة ياسر الدوسري",
+        description: "إذاعة للقرآن الكريم",
+        url: "https://backup.qurango.net/radio/yasser_aldosari",
+        thumb: "https://www.almowaten.net/wp-content/uploads/2022/06/%D9%8A%D8%A7%D8%B3%D8%B1-%D8%A7%D9%84%D8%AF%D9%88%D8%B3%D8%B1%D9%8A.jpg",
+        status: "active"
+    }
+
+
+];
+
 
         // عناصر DOM
         const audioPlayer = document.getElementById('audio-player');
@@ -1450,7 +1599,7 @@
             actionsMenu.classList.toggle('show');
         }
 
-        // حفظ البيانات в localStorage
+        // حفظ البيانات في localStorage
         function saveToLocalStorage() {
             try {
                 localStorage.setItem('radioStations', JSON.stringify(radioStations));
