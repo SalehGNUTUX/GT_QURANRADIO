@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مشغل الإذاعات القرآنية</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text x='8' y='13' font-size='14' text-anchor='middle' fill='%231b5e20' font-weight='bold'>📻</text></svg>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             box-sizing: border-box;
@@ -15,11 +19,12 @@
             color: #fff;
             min-height: 100vh;
             padding: 20px;
-            padding-bottom: 100px; /* مساحة للمشغل في الأسفل */
+            padding-bottom: 180px;
+            overflow-x: hidden;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -42,7 +47,6 @@
 
         .description {
             font-size: 1.2rem;
-            margin-bottom: 20px;
             color: #e0e0e0;
         }
 
@@ -63,22 +67,29 @@
             cursor: pointer;
             z-index: 1001;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .menu-toggle.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.8);
         }
 
         .actions-menu {
             position: fixed;
             top: 80px;
             left: 20px;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.95);
             border-radius: 15px;
             padding: 15px;
             z-index: 1000;
             display: none;
             flex-direction: column;
             gap: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(10px);
-            min-width: 200px;
+            min-width: 220px;
         }
 
         .actions-menu.show {
@@ -90,289 +101,109 @@
             justify-content: flex-start;
         }
 
-        /* المشغل الثابت في الأسفل */
-        .player-container {
-            background: rgba(0, 0, 0, 0.9);
-            border-radius: 15px 15px 0 0;
-            padding: 15px;
-            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.3);
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            transition: all 0.3s ease;
+        /* عرض بطاقة واحدة كبيرة */
+        .station-display {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
-        .player-container.minimized {
-            height: 70px;
-            overflow: hidden;
-        }
-
-        .player-container.minimized .station-info {
+        .station-navigation {
             display: flex;
-            align-items: center;
-        }
-
-        .player-container.minimized .station-thumb {
-            width: 50px;
-            height: 50px;
-            margin-left: 10px;
-            margin-bottom: 0;
-        }
-
-        .player-container.minimized .station-thumb i {
-            font-size: 1.5rem;
-        }
-
-        .player-container.minimized .station-details {
-            flex: 1;
-            overflow: hidden;
-        }
-
-        .player-container.minimized .station-name {
-            font-size: 1rem;
-            margin-bottom: 5px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .player-container.minimized .station-desc {
-            display: none;
-        }
-
-        .player-container.minimized .audio-player {
-            display: none;
-        }
-
-        .player-container.minimized .controls {
-            margin-top: 0;
-            flex-direction: row;
             justify-content: space-between;
-        }
-
-        .player-container.minimized .volume-control {
-            display: none;
-        }
-
-        .minimize-btn {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
             align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 0.9rem;
+            gap: 30px;
         }
 
-        .station-info {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .station-thumb {
-            width: 80px;
-            height: 80px;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-left: 15px;
-            background: #333;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .station-thumb i {
-            font-size: 2rem;
+        .nav-btn {
+            background: rgba(253, 187, 45, 0.2);
+            border: 2px solid #fdbb2d;
             color: #fdbb2d;
-        }
-
-        .station-thumb img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .station-details {
-            flex: 1;
-            overflow: hidden;
-        }
-
-        .station-name {
-            font-size: 1.2rem;
-            margin-bottom: 5px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .station-desc {
-            color: #ccc;
-            font-size: 0.9rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .audio-player {
-            width: 100%;
-            margin: 10px 0;
-            border-radius: 5px;
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .controls {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.8rem;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-top: 10px;
-            flex-wrap: wrap;
-            gap: 10px;
+            justify-content: center;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
         }
 
-        .btn {
+        .nav-btn:hover {
             background: #fdbb2d;
             color: #1a2a6c;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: bold;
+            transform: scale(1.15);
+            box-shadow: 0 5px 20px rgba(253, 187, 45, 0.4);
+        }
+
+        .station-main-card {
+            flex: 1;
+            background: linear-gradient(135deg, rgba(26, 42, 108, 0.4), rgba(178, 31, 31, 0.3));
+            border-radius: 20px;
+            padding: 40px;
             display: flex;
+            gap: 40px;
             align-items: center;
-            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
 
-        .btn:hover {
-            background: #ffcc44;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn i {
-            margin-left: 8px;
-        }
-
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 0.8rem;
-        }
-
-        .btn-danger {
-            background: #b21f1f;
-            color: white;
-        }
-
-        .btn-edit {
-            background: #1a2a6c;
-            color: white;
-        }
-
-        .btn-success {
-            background: #2e7d32;
-            color: white;
-        }
-
-        .btn-info {
-            background: #1565c0;
-            color: white;
-        }
-
-        .volume-control {
-            display: flex;
-            align-items: center;
-            width: 150px;
-        }
-
-        .volume-control i {
-            margin-left: 10px;
-            color: #fdbb2d;
-        }
-
-        .stations-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .station-card {
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 10px;
-            overflow: hidden;
-            transition: transform 0.3s ease;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .station-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .station-card-thumb {
-            height: 150px;
+        .station-main-thumb {
+            width: 220px;
+            height: 220px;
+            border-radius: 20px;
             overflow: hidden;
             background: #333;
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
         }
 
-        .station-card-thumb i {
-            font-size: 3rem;
+        .station-main-thumb i {
+            font-size: 5rem;
             color: #fdbb2d;
         }
 
-        .station-card-thumb img {
+        .station-main-thumb img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        .station-card-content {
-            padding: 15px;
+        .station-main-info {
+            flex: 1;
         }
 
-        .station-card-title {
-            font-size: 1.2rem;
-            margin-bottom: 8px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .station-card-desc {
-            color: #ccc;
-            font-size: 0.9rem;
+        .station-main-title {
+            font-size: 2.2rem;
             margin-bottom: 15px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            color: #fdbb2d;
+            word-wrap: break-word;
+            white-space: normal;
+            line-height: 1.3;
         }
 
-        .station-card-actions {
-            display: flex;
-            justify-content: space-between;
+        .station-main-desc {
+            font-size: 1.3rem;
+            color: #e0e0e0;
+            margin-bottom: 25px;
+            line-height: 1.8;
+            word-wrap: break-word;
+            white-space: normal;
         }
 
-        .station-status {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+        .station-main-status {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1rem;
+            background: rgba(0, 0, 0, 0.4);
+            margin-bottom: 20px;
         }
 
         .status-active {
@@ -383,84 +214,463 @@
             color: #f44336;
         }
 
-        .filter-section {
+        .station-main-actions {
             display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
             gap: 15px;
+            margin-top: 25px;
             flex-wrap: wrap;
         }
 
-        .filter-btn {
-            background: rgba(0, 0, 0, 0.4);
-            color: white;
+        /* المشغل الثابت في الأسفل */
+        .player-container {
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.98), rgba(26, 42, 108, 0.95));
+            border-radius: 20px 20px 0 0;
+            padding: 25px 30px;
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(0);
+            backdrop-filter: blur(20px);
+        }
+
+        .player-container.hidden {
+            transform: translateY(calc(100% - 80px));
+        }
+
+        .player-container.minimized {
+            padding: 12px 25px;
+            height: 80px;
+        }
+
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .player-container.minimized .player-header {
+            margin-bottom: 0;
+        }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .player-thumb {
+            width: 55px;
+            height: 55px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .player-container.minimized .player-thumb {
+            width: 45px;
+            height: 45px;
+        }
+
+        .player-thumb i {
+            font-size: 1.5rem;
+            color: #fdbb2d;
+        }
+
+        .player-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .player-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .player-name {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: 600;
+        }
+
+        .player-container.minimized .player-name {
+            font-size: 0.95rem;
+        }
+
+        .player-desc {
+            font-size: 0.85rem;
+            color: #ccc;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .player-container.minimized .player-desc {
+            display: none;
+        }
+
+        .player-toggle-btn {
+            background: rgba(255, 255, 255, 0.15);
             border: none;
-            padding: 10px 20px;
-            border-radius: 50px;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .player-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.1);
+        }
+
+        /* شريط التقدم */
+        .player-progress {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .player-container.minimized .player-progress {
+            display: none;
+        }
+
+        .time-display {
+            font-size: 0.95rem;
+            color: #ccc;
+            min-width: 50px;
+            text-align: center;
+            font-family: monospace;
+        }
+
+        .player-container.minimized .time-display {
+            font-size: 0.8rem;
+            min-width: 40px;
+        }
+
+        /* شريط التقدم المرئي */
+        .progress-container {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #fdbb2d, #ffcc44);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        /* أزرار التحكم */
+        .player-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .player-container.minimized .player-controls {
+            display: none;
+        }
+
+        /* أدوات التحكم المصغرة */
+        .mini-controls {
+            display: none;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+            justify-content: flex-end;
+        }
+
+        .player-container.minimized .mini-controls {
+            display: flex;
+        }
+
+        .mini-play-pause {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.1rem;
             transition: all 0.3s ease;
         }
 
-        .filter-btn.active {
+        .mini-play-pause:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.1);
+        }
+
+        .mini-next-prev {
+            display: flex;
+            gap: 10px;
+        }
+
+        .mini-nav-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .mini-nav-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        .play-pause-btn {
+            background: linear-gradient(135deg, #1a2a6c, #2a3a8c);
+            color: white;
+            border: none;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(26, 42, 108, 0.4);
+        }
+
+        .play-pause-btn:hover {
+            background: linear-gradient(135deg, #2a3a8c, #3a4a9c);
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(26, 42, 108, 0.6);
+        }
+
+        .control-btn {
+            background: linear-gradient(135deg, #fdbb2d, #ffcc44);
+            color: #1a2a6c;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(253, 187, 45, 0.3);
+        }
+
+        .control-btn:hover {
+            background: linear-gradient(135deg, #ffcc44, #ffd966);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(253, 187, 45, 0.5);
+        }
+
+        .control-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .volume-control i {
+            color: #fdbb2d;
+            font-size: 1.2rem;
+        }
+
+        .volume-slider {
+            width: 120px;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #fdbb2d;
+            cursor: pointer;
+        }
+
+        .volume-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #fdbb2d;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn {
             background: #fdbb2d;
             color: #1a2a6c;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 50px;
+            cursor: pointer;
             font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
         }
 
-        .refresh-section {
-            text-align: center;
-            margin: 30px 0;
+        .btn:hover {
+            background: #ffcc44;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
-        .refresh-btn {
-            background: #1a2a6c;
-            color: white;
-            padding: 12px 25px;
+        .btn i {
             font-size: 1rem;
         }
 
+        .btn-sm {
+            padding: 8px 14px;
+            font-size: 0.85rem;
+        }
+
+        .btn-danger {
+            background: #b21f1f;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #d32f2f;
+        }
+
+        .btn-edit {
+            background: #1a2a6c;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #2a3a8c;
+        }
+
+        .btn-success {
+            background: #2e7d32;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #388e3c;
+        }
+
+        .btn-info {
+            background: #1565c0;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #1976d2;
+        }
+
+        /* قسم الإضافة */
         .add-station-section {
             background: rgba(0, 0, 0, 0.4);
-            padding: 20px;
-            border-radius: 15px;
+            padding: 35px;
+            border-radius: 20px;
             margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .add-station-section h2 {
+            color: #fdbb2d;
+            margin-bottom: 25px;
         }
 
         .add-station-form {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 20px;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 0;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             color: #fdbb2d;
+            font-weight: 600;
         }
 
         .form-group input, .form-group select, .form-group textarea {
             width: 100%;
-            padding: 12px;
-            border-radius: 5px;
-            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            border: 2px solid rgba(253, 187, 45, 0.3);
             background: rgba(255, 255, 255, 0.1);
             color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
         }
 
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-            outline: 2px solid #fdbb2d;
+            outline: none;
+            border-color: #fdbb2d;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 15px rgba(253, 187, 45, 0.2);
         }
 
         .form-submit {
             grid-column: span 2;
             display: flex;
             justify-content: center;
+            margin-top: 10px;
         }
 
+        /* النافذة المنبثقة */
         .modal {
             display: none;
             position: fixed;
@@ -468,45 +678,241 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1000;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
             justify-content: center;
             align-items: center;
+            padding: 20px;
+            backdrop-filter: blur(10px);
         }
 
         .modal-content {
-            background: #1a2a6c;
-            padding: 30px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 500px;
+            background: linear-gradient(135deg, #1a2a6c, #2a3a8c);
+            padding: 45px;
+            border-radius: 25px;
+            width: 95%;
+            max-width: 900px;
             max-height: 90vh;
             overflow-y: auto;
+            box-shadow: 0 15px 60px rgba(0, 0, 0, 0.7);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #fdbb2d;
+        }
+
+        .modal-header h2 {
+            color: #fdbb2d;
+            font-size: 2rem;
         }
 
         .close-modal {
-            background: none;
+            background: rgba(255, 255, 255, 0.1);
             border: none;
             color: white;
-            font-size: 1.5rem;
+            font-size: 2rem;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
             cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-modal:hover {
+            transform: rotate(90deg);
+            background: rgba(253, 187, 45, 0.3);
+            color: #fdbb2d;
+        }
+
+        /* قائمة جميع المحطات */
+        .all-stations-section {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 35px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .all-stations-section h2 {
+            color: #fdbb2d;
+            margin-bottom: 25px;
+        }
+
+        .stations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .station-card {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            border: 2px solid transparent;
+        }
+
+        .station-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 30px rgba(253, 187, 45, 0.3);
+            border-color: rgba(253, 187, 45, 0.5);
+        }
+
+        .station-card-thumb {
+            height: 180px;
+            overflow: hidden;
+            background: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .station-card-thumb i {
+            font-size: 3.5rem;
+            color: #fdbb2d;
+        }
+
+        .station-card-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .station-card:hover .station-card-thumb img {
+            transform: scale(1.1);
+        }
+
+        .station-card-content {
+            padding: 20px;
+        }
+
+        .station-card-title {
+            font-size: 1.15rem;
+            margin-bottom: 10px;
+            color: #fdbb2d;
+            white-space: normal;
+            word-wrap: break-word;
+            line-height: 1.5;
+            font-weight: 600;
+        }
+
+        .station-card-desc {
+            color: #ccc;
+            font-size: 0.95rem;
+            margin-bottom: 18px;
+            white-space: normal;
+            word-wrap: break-word;
+            line-height: 1.6;
+        }
+
+        .station-card-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .station-status {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 6px 14px;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            backdrop-filter: blur(5px);
+            font-weight: 600;
+        }
+
+        .filter-section {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: 2px solid rgba(253, 187, 45, 0.3);
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .filter-btn:hover {
+            border-color: #fdbb2d;
+            background: rgba(253, 187, 45, 0.1);
+        }
+
+        .filter-btn.active {
+            background: #fdbb2d;
+            color: #1a2a6c;
+            border-color: #fdbb2d;
+            box-shadow: 0 4px 15px rgba(253, 187, 45, 0.4);
+        }
+
+        .save-notification {
+            position: fixed;
+            bottom: 150px;
+            right: 30px;
+            background: linear-gradient(135deg, #4caf50, #66bb6a);
+            color: white;
+            padding: 18px 30px;
+            border-radius: 15px;
+            display: none;
+            z-index: 3000;
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+            font-weight: 600;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         footer {
             text-align: center;
-            margin-top: 40px;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
+            margin-top: 50px;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
             font-size: 1rem;
-            line-height: 1.6;
+            line-height: 1.8;
         }
 
         .love {
@@ -518,146 +924,155 @@
         .developer {
             color: #fdbb2d;
             font-weight: bold;
-            margin-top: 10px;
-        }
-
-        .save-notification {
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            background: #4caf50;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            display: none;
-            z-index: 1000;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-            margin: 10px 0;
-            overflow: hidden;
-            display: none;
-        }
-
-        .progress {
-            height: 100%;
-            background: #fdbb2d;
-            width: 0%;
-            transition: width 0.3s ease;
+            margin-top: 12px;
+            font-size: 1.1rem;
         }
 
         @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
         }
 
+        /* Responsive */
         @media (max-width: 768px) {
             body {
                 padding: 15px;
-                padding-bottom: 80px;
+                padding-bottom: 160px;
             }
 
-            .container {
-                padding: 15px;
+            h1 {
+                font-size: 1.8rem;
             }
 
-            .stations-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-                gap: 15px;
-            }
-
-            .station-info {
-                flex-direction: row;
-                text-align: right;
-            }
-
-            .station-thumb {
-                width: 60px;
-                height: 60px;
-                margin-left: 10px;
-                margin-bottom: 0;
-            }
-
-            .station-thumb i {
-                font-size: 1.5rem;
-            }
-
-            .station-name {
+            .description {
                 font-size: 1rem;
             }
 
-            .station-desc {
-                font-size: 0.8rem;
+            .station-display {
+                padding: 25px 15px;
             }
 
-            .controls {
-                flex-direction: row;
-                gap: 8px;
+            .station-navigation {
+                flex-direction: column;
+                gap: 20px;
             }
 
-            .btn {
-                padding: 8px 12px;
-                font-size: 0.9rem;
+            .nav-btn {
+                width: 55px;
+                height: 55px;
+                font-size: 1.5rem;
             }
 
-            .volume-control {
-                width: 120px;
+            .station-main-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 25px;
+                gap: 25px;
+            }
+
+            .station-main-thumb {
+                width: 160px;
+                height: 160px;
+            }
+
+            .station-main-title {
+                font-size: 1.6rem;
+            }
+
+            .station-main-desc {
+                font-size: 1.05rem;
+            }
+
+            .station-main-actions {
+                justify-content: center;
+            }
+
+            .add-station-section {
+                padding: 25px 15px;
             }
 
             .add-station-form {
                 grid-template-columns: 1fr;
             }
 
+            .form-group.full-width,
             .form-submit {
                 grid-column: span 1;
             }
 
-            .filter-section {
-                flex-direction: column;
-                align-items: center;
+            .all-stations-section {
+                padding: 25px 15px;
+            }
+
+            .stations-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 15px;
+            }
+
+            .station-card-thumb {
+                height: 140px;
+            }
+
+            .modal-content {
+                padding: 25px;
+                max-width: 100%;
+            }
+
+            .modal-header h2 {
+                font-size: 1.5rem;
             }
 
             .player-container {
-                padding: 10px;
+                padding: 15px 20px;
             }
 
             .player-container.minimized {
+                padding: 10px 15px;
+                height: 70px;
+            }
+
+            .play-pause-btn {
+                width: 60px;
                 height: 60px;
+                font-size: 1.5rem;
             }
 
-            .player-container.minimized .station-thumb {
-                width: 40px;
-                height: 40px;
-            }
-
-            .player-container.minimized .station-name {
+            .control-btn {
+                padding: 10px 18px;
                 font-size: 0.9rem;
             }
 
-            .minimize-btn {
-                top: 5px;
-                left: 5px;
-                width: 25px;
-                height: 25px;
-                font-size: 0.8rem;
+            .volume-control {
+                display: none;
             }
 
             .menu-toggle {
+                width: 45px;
+                height: 45px;
                 top: 15px;
                 left: 15px;
-                width: 40px;
-                height: 40px;
             }
 
             .actions-menu {
-                top: 65px;
+                top: 70px;
                 left: 15px;
-                min-width: 180px;
+                min-width: 200px;
+            }
+
+            .mini-controls {
+                gap: 10px;
+            }
+
+            .mini-play-pause {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+
+            .mini-nav-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 0.8rem;
             }
         }
     </style>
@@ -668,12 +1083,6 @@
     </button>
 
     <div class="actions-menu" id="actions-menu">
-        <button class="filter-btn active" data-filter="all">
-            <i class="fas fa-list"></i> جميع الإذاعات
-        </button>
-        <button class="filter-btn" data-filter="active">
-            <i class="fas fa-play-circle"></i> الإذاعات النشطة فقط
-        </button>
         <button class="btn btn-info" id="import-btn">
             <i class="fas fa-file-import"></i> استيراد البيانات
         </button>
@@ -684,7 +1093,7 @@
             <i class="fas fa-download"></i> حفظ كملف
         </button>
         <button class="btn btn-danger" id="reset-btn">
-            <i class="fas fa-undo"></i> استعادة الإفتراضي
+            <i class="fas fa-undo"></i> استعادة الافتراضي
         </button>
     </div>
 
@@ -694,32 +1103,54 @@
             <p class="description">استمع إلى أجمل الإذاعات القرآنية من مختلف أنحاء العالم الإسلامي</p>
         </header>
 
-        <div class="stations-grid" id="stations-container">
-            <!-- المحطات الإذاعية سيتم إضافتها بواسطة JavaScript -->
-        </div>
+        <!-- عرض المحطة الحالية -->
+        <div class="station-display">
+            <div class="station-navigation">
+                <button class="nav-btn" id="prev-station-btn">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
 
-        <div class="refresh-section">
-            <div class="progress-bar" id="progress-bar">
-                <div class="progress" id="progress"></div>
+                <div class="station-main-card">
+                    <div class="station-main-thumb" id="main-thumb">
+                        <i class="fas fa-quran"></i>
+                    </div>
+                    <div class="station-main-info">
+                        <h2 class="station-main-title" id="main-title">إذاعة القرآن الكريم</h2>
+                        <p class="station-main-desc" id="main-desc">استمتع بالاستماع إلى القرآن الكريم</p>
+                        <span class="station-main-status" id="main-status">
+                            <i class="fas fa-circle status-active"></i> نشطة
+                        </span>
+                        <div class="station-main-actions">
+                            <button class="btn btn-edit" id="edit-current-btn">
+                                <i class="fas fa-edit"></i> تعديل
+                            </button>
+                            <button class="btn btn-danger" id="delete-current-btn">
+                                <i class="fas fa-trash"></i> حذف
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="nav-btn" id="next-station-btn">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
             </div>
-            <button class="btn refresh-btn" id="refresh-btn">
-                <i class="fas fa-sync-alt"></i> فحص وتحديث الروابط
-            </button>
         </div>
 
+        <!-- قسم الإضافة -->
         <div class="add-station-section">
-            <h2 style="text-align: center; margin-bottom: 20px;">إضافة إذاعة جديدة</h2>
+            <h2 style="text-align: center;">إضافة إذاعة جديدة</h2>
             <div class="add-station-form">
                 <div class="form-group">
-                    <label for="new-station-name">اسم الإذاعة</label>
+                    <label for="new-station-name">اسم الإذاعة *</label>
                     <input type="text" id="new-station-name" placeholder="أدخل اسم الإذاعة">
                 </div>
                 <div class="form-group">
-                    <label for="new-station-desc">وصف الإذاعة</label>
+                    <label for="new-station-desc">وصف الإذاعة *</label>
                     <input type="text" id="new-station-desc" placeholder="أدخل وصفاً للإذاعة">
                 </div>
-                <div class="form-group">
-                    <label for="new-station-url">رابط البث المباشر</label>
+                <div class="form-group full-width">
+                    <label for="new-station-url">رابط البث المباشر *</label>
                     <input type="text" id="new-station-url" placeholder="أدخل رابط البث المباشر">
                 </div>
                 <div class="form-group">
@@ -741,6 +1172,21 @@
             </div>
         </div>
 
+        <!-- جميع المحطات -->
+        <div class="all-stations-section">
+            <h2 style="text-align: center;">جميع الإذاعات</h2>
+            <div class="filter-section">
+                <button class="filter-btn active" data-filter="all">
+                    <i class="fas fa-list"></i> جميع الإذاعات
+                </button>
+                <button class="filter-btn" data-filter="active">
+                    <i class="fas fa-play-circle"></i> الإذاعات النشطة فقط
+                </button>
+            </div>
+            <div class="stations-grid" id="stations-container">
+            </div>
+        </div>
+
         <footer>
             <p>جميع الحقوق محفوظة © 2025 | مشروع الإذاعات القرآنية</p>
             <p>صمم بحب <span class="love">♥️</span> لخدمة القرآن الكريم والحديث النبوي</p>
@@ -748,40 +1194,71 @@
         </footer>
     </div>
 
-    <!-- المشغل الثابت في الأسفل -->
-    <div class="player-container" id="player-container">
-        <button class="minimize-btn" id="minimize-btn">
-            <i class="fas fa-minus"></i>
-        </button>
-        <div class="station-info">
-            <div class="station-thumb">
-                <i class="fas fa-quran"></i>
+    <!-- المشغل الثابت -->
+    <div class="player-container minimized" id="player-container">
+        <div class="player-header">
+            <div class="player-info">
+                <div class="player-thumb" id="player-thumb">
+                    <i class="fas fa-quran"></i>
+                </div>
+                <div class="player-details">
+                    <div class="player-name" id="player-name">إذاعة القرآن الكريم</div>
+                    <div class="player-desc" id="player-desc">استمتع بالاستماع</div>
+                </div>
             </div>
-            <div class="station-details">
-                <h2 class="station-name" id="current-station-name">إذاعة القرآن الكريم من القاهرة</h2>
-                <p class="station-desc" id="current-station-desc">أشهر إذاعة قرآنية في العالم الإسلامي</p>
+            
+            <!-- أدوات التحكم المصغرة -->
+            <div class="mini-controls">
+                <div class="mini-next-prev">
+                    <button class="mini-nav-btn" id="mini-prev-btn">
+                        <i class="fas fa-step-backward"></i>
+                    </button>
+                    <button class="mini-nav-btn" id="mini-next-btn">
+                        <i class="fas fa-step-forward"></i>
+                    </button>
+                </div>
+                <button class="mini-play-pause" id="mini-play-pause-btn">
+                    <i class="fas fa-play"></i>
+                </button>
             </div>
+            
+            <button class="player-toggle-btn" id="minimize-btn">
+                <i class="fas fa-expand"></i>
+            </button>
         </div>
 
-        <audio id="audio-player" class="audio-player" controls></audio>
+        <div class="player-progress">
+            <span class="time-display" id="current-time">0:00</span>
+            <div class="progress-container" id="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <span class="time-display" id="duration-time">--:--</span>
+        </div>
 
-        <div class="controls">
-            <button class="btn" id="prev-btn">
-                <i class="fas fa-backward"></i> السابقة
+        <div class="player-controls">
+            <!-- زر التشغيل/الإيقاف الجديد -->
+            <button class="play-pause-btn" id="play-pause-btn">
+                <i class="fas fa-play"></i>
+            </button>
+
+            <button class="control-btn" id="prev-btn">
+                <i class="fas fa-backward"></i>
+                <span>السابقة</span>
             </button>
 
             <div class="volume-control">
                 <i class="fas fa-volume-up"></i>
-                <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.7">
+                <input type="range" class="volume-slider" id="volume-slider" min="0" max="1" step="0.1" value="0.7">
             </div>
 
-            <button class="btn" id="next-btn">
-                التالية <i class="fas fa-forward"></i>
+            <button class="control-btn" id="next-btn">
+                <span>التالية</span>
+                <i class="fas fa-forward"></i>
             </button>
         </div>
     </div>
 
-    <!-- Modal for editing station -->
+    <!-- Modal للتعديل -->
     <div class="modal" id="edit-station-modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -791,20 +1268,20 @@
             <div class="add-station-form">
                 <input type="hidden" id="edit-station-index">
                 <div class="form-group">
-                    <label for="edit-station-name">اسم الإذاعة</label>
-                    <input type="text" id="edit-station-name" placeholder="أدخل اسم الإذاعة">
+                    <label for="edit-station-name">اسم الإذاعة *</label>
+                    <input type="text" id="edit-station-name">
                 </div>
                 <div class="form-group">
-                    <label for="edit-station-desc">وصف الإذاعة</label>
-                    <input type="text" id="edit-station-desc" placeholder="أدخل وصفاً للإذاعة">
+                    <label for="edit-station-desc">وصف الإذاعة *</label>
+                    <input type="text" id="edit-station-desc">
+                </div>
+                <div class="form-group full-width">
+                    <label for="edit-station-url">رابط البث المباشر *</label>
+                    <input type="text" id="edit-station-url">
                 </div>
                 <div class="form-group">
-                    <label for="edit-station-url">رابط البث المباشر</label>
-                    <input type="text" id="edit-station-url" placeholder="أدخل رابط البث المباشر">
-                </div>
-                <div class="form-group">
-                    <label for="edit-station-thumb">رابط الصورة المصغرة (اختياري)</label>
-                    <input type="text" id="edit-station-thumb" placeholder="أدخل رابط الصورة">
+                    <label for="edit-station-thumb">رابط الصورة المصغرة</label>
+                    <input type="text" id="edit-station-thumb">
                 </div>
                 <div class="form-group">
                     <label for="edit-station-status">حالة الإذاعة</label>
@@ -822,15 +1299,15 @@
         </div>
     </div>
 
-    <!-- Modal for import/export -->
+    <!-- Modal للبيانات -->
     <div class="modal" id="data-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="data-modal-title">استيراد البيانات</h2>
+                <h2 id="data-modal-title">البيانات</h2>
                 <button class="close-modal" id="close-data-modal">&times;</button>
             </div>
-            <div class="form-group">
-                <textarea id="data-textarea" rows="10" placeholder="الصق بيانات JSON هنا"></textarea>
+            <div class="form-group full-width">
+                <textarea id="data-textarea" rows="12" style="font-family: monospace;"></textarea>
             </div>
             <div class="form-submit">
                 <button class="btn" id="process-data-btn">
@@ -844,447 +1321,344 @@
         تم حفظ التغييرات بنجاح!
     </div>
 
+    <audio id="audio-player" style="display: none;"></audio>
+
     <script>
-        // بيانات الإذاعات الافتراضية (من الروابط التي قدمتها)
-       const defaultStations = [
-    {
-        name: "إذاعة القرآن الكريم من القاهرة",
-        description: "أشهر إذاعة قرآنية في العالم الإسلامي",
-        url: "https://Qurango.net/radio/tarateel",
-        thumb: "https://tilawah.net/storage/stations/01JJY6EY9GZWYWX5YBZZY1HMB4.jpg",
-        status: "inactive"
-    },
-    {
-        name: "إذاعة القرآن الكريم من السعودية",
-        description: "الإذاعة الرسمية للمملكة العربية السعودية",
-        url: "https://Qurango.net/radio/radio_saudi",
-        thumb: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQ23iTExUL9eGD_I_Ckv8aFeKgmVynI8959A&s",
-        status: "active"
-    },
-    {
-        name: "إذاعة القرآن الكريم من الرياض",
-        description: "إذاعة القرآن الكريم من العاصمة السعودية الرياض",
-        url: "https://Qurango.net/radio/riyadh",
-        thumb: "https://www.almowaten.net/wp-content/uploads/21453.jpg",
-        status: "active"
-    },
-    {
-        name: "مباشرة من مكة",
-        description: "إذاعة القرآن الكريم من السعودية",
-        url: "https://n0a.radiojar.com/4wqre23fytzuv?rj-ttl=5&rj-tok=AAABmM4nwrYA3E_8aFeiJDe0AQ",
-        thumb: "https://islamicbulletin.org/wp-content/uploads/QuranMakkah.jpg",
-        status: "active"
-    },
-    {
-        name: "إذاعة المجد",
-        description: "إذاعة المجد للقرآن الكريم",
-        url: "http://r1.tarat.com:8196/stream?type=http&nocache=31",
-        thumb: "https://tilawah.net/storage/stations/01JJY7369FJC0FQ9CER86F3VD4.jpg",
-        status: "active"
-    },
-    {
-        name: "إذاعة الشيخ عبد الباسط",
-        description: "إذاعة الشيخ عبد الباسط برواية ورش",
-        url: "https://server03.quran-uni.com:7125/;*.mp3",
-        thumb: "https://guidetoquran.com/media/screenshot-2025-01-11-1704522002_showWebsiteThumb.png",
-        status: "active"
-    },
-    {
-        name:"إذاعة وياك",
-        description: "دعوة و تلاوة",
-        url: "https://work.radiowayak.org/listen/live/live.mp3",
-        thumb: "https://files.mastodon.social/accounts/avatars/111/737/142/888/099/958/original/89004866756d64bc.jpg",
-        status: "active"
-    },
-    {
-        name: "إذاعة نابلس للقرآن الكريم",
-        description: "دعوة و رباط",
-        url: "https://quran-radio.org:8005/;?type=http&nocache=29",
-        thumb: "https://quran-radio.com/storage/sliders/17291776305.jpg",
-        status: "active"
-    },
-    {
-        name: "إذاعة زين بلادي",
-        description: "البث المباشر إذاعة زين بلادي للقرآن الكريم",
-        url: "https://www.zinebladi.ma/radio.php",
-        thumb: "https://www.zinebladi.ma/images/global-logo.svg",
-        status: "active"
-    },
-    {
-        name: "إذاعة السنة النبوية",
-        description: " السنة النبوية الشريفة",
-        url: "https://radiosunna.radioca.st/stream",
-        thumb: "https://www.radiosunna.com/uploads/6/6/1/7/6617650/editor/serene115.png",
-        status: "active"
-    },
-    {
-        name: "إذاعة الرقية الشرعية",
-        description: "تحصين البيت و النفس و الجسد",
-        url: "https://backup.qurango.net/radio/roqiah",
-        thumb: "https://i1.sndcdn.com/artworks-zygACgAd2NKwuohE-UF2Piw-t500x500.jpg",
-        status: "active"
-    },
-    {
-        name: "إذاعة تلاوات خاشعة",
-        description: "إذاعة للقرآن الكريم",
-        url: "https://backup.qurango.net/radio/salma",
-        thumb: "https://pbs.twimg.com/profile_images/1396812808659079169/5ft2haLD_400x400.jpg",
-        status: "active"
-    },
-    {
-        name: "إذاعة القرأن الكريم من القاهرة",
-        description: "إذاعة للقرآن الكريم",
-        url: "https://n0e.radiojar.com/8s5u5tpdtwzuv?rj-ttl=5&rj-tok=AAABjW7yROAA0TUU8cXhXIAi6g",
-        thumb: "https://apkdownmod.com/thumbnail?src=images/appsicon/2020/08/app-image-5f42ba68a61b1.jpg",
-        status: "active"
-    },
-    {
-        name: "المختصر في تفسير القرآن الكريم",
-        description: "إذاعة للقرآن الكريم",
-        url: "https://backup.qurango.net/radio/mukhtasartafsir",
-        thumb: "https://areejquran.net/wp-content/uploads/2015/12/unnamed.jpg",
-        status: "active"
-    },
-    {
-        name: "إذاعة تكبيرات العيد",
-        description: "إذاعة للقرآن الكريم",
-        url: "https://backup.qurango.net/radio/eid",
-        thumb: "https://i.pinimg.com/736x/3c/b3/fc/3cb3fc494b9f8332a7b7b3256e3d9822.jpg",
-        status: "active"
-    },
-    {
-        name: "إذاعة أبو بكر الشاطري",
-        description: "إذاعة للقرآن الكريم",
-        url: "https://backup.qurango.net/radio/shaik_abu_bakr_al_shatri",
-        thumb: "https://i1.sndcdn.com/artworks-000663801097-wb0y31-t200x200.jpg",
-        status: "active"
-    },
-    {
-        name: "إذاعة أحمد خضر الطرابلسي",
-        description: "إذاعة للقرآن الكريم",
-        url: "https://backup.qurango.net/radio/ahmad_khader_altarabulsi",
-        thumb: "https://i.pinimg.com/564x/d3/c2/9c/d3c29cc03198c3c15d380af048b2d68b.jpg",
-        status: "active"
-    },
-    {
-        name: "إذاعة إبراهيم الأخضر",
-        description: "إذاعة للقرآن الكريم",
-        url: "https://backup.qurango.net/radio/ibrahim_alakdar",
-        thumb: "https://static.suratmp3.com/pics/reciters/thumbs/44_600_600.jpg",
-        status: "active"
-    },
-    {
-        name: "إذاعة خالد الجليل",
-        description: "إذاعة للقرآن الكريم",
-        url: "https://backup.qurango.net/radio/khalid_aljileel",
-        thumb: "https://i1.sndcdn.com/avatars-ubX3f7yLm5eGyphJ-A4ysyA-t500x500.jpg",
-        status: "active"
-    },
-    {
-        name: "إذاعة صلاح الهاشم",
-        description: "إذاعة للقرآن الكريم",
-        url: "https://backup.qurango.net/radio/salah_alhashim",
-        thumb: "https://i.pinimg.com/564x/e9/22/1b/e9221b5ffd484937dc70c3eabe350c6f.jpg",
-        status: "active"
-    },
-    {
-        name: "إذاعة صلاح بو خاطر",
-        description: "إذاعة للقرآن الكريم",
-        url: "https://backup.qurango.net/radio/slaah_bukhatir",
-        thumb: "https://pbs.twimg.com/profile_images/1306502829251624960/uHKIJQpq_200x200.jpg",
-        status: "active"
-    },
-    {
-        name: "إذاعة عبدالباسط عبدالصمد",
-        description: "إذاعة للقرآن الكريم",
-        url: "https://backup.qurango.net/radio/abdulbasit_abdulsamad_mojawwad",
-        thumb: "https://cdns-images.dzcdn.net/images/talk/06b711ac6da4cde0eb698e244f5e27b8/300x300.jpg",
-        status: "active"
-    },
-    {
-        name: "إذاعة عبد العزيز سحيم",
-        description: "إذاعة للقرآن الكريم",
-        url: "https://backup.qurango.net/radio/a_sheim",
-        thumb: "https://i.pinimg.com/564x/a7/37/47/a73747375897de4897da372a0fd921a0.jpg",
-        status: "active"
-    },
-    {
-        name: "إذاعة فارس عباد",
-        description: "إذاعة للقرآن الكريم",
-        url: "https://backup.qurango.net/radio/fares_abbad",
-        thumb: "https://static.suratmp3.com/pics/reciters/thumbs/15_600_600.jpg",
-        status: "active"
-    },
-    {
-        name: "إذاعة ماهر المعيقلي",
-        description: "إذاعة للقرآن الكريم",
-        url: "https://backup.qurango.net/radio/maher",
-        thumb: "https://is1-ssl.mzstatic.com/image/thumb/Podcasts113/v4/4b/80/58/4b80582d-78ca-a466-0341-0869bc611745/mza_5280524847349008894.jpg/250x250bb.jpg",
-        status: "active"
-    },
-    {
-        name: "إذاعة محمد صديق المنشاوي",
-        description: "إذاعة للقرآن الكريم",
-        url: "https://backup.qurango.net/radio/mohammed_siddiq_alminshawi_mojawwad",
-        thumb: "https://i1.sndcdn.com/artworks-000284633237-7gdg9t-t200x200.jpg",
-        status: "active"
-    },
-    {
-        name: "إذاعة محمود خليل الحصري",
-        description: "إذاعة للقرآن الكريم",
-        url: "https://backup.qurango.net/radio/mahmoud_khalil_alhussary_mojawwad",
-        thumb: "https://watanimg.elwatannews.com/image_archive/original_lower_quality/18194265071637693809.jpg",
-        status: "active"
-    },
-    {
-        name: "إذاعة محمود علي البنا",
-        description: "إذاعة للقرآن الكريم",
-        url: "https://backup.qurango.net/radio/mahmoud_ali__albanna_mojawwad",
-        thumb: "https://i.pinimg.com/200x/29/67/b3/2967b3fbc1ce1f5a70874288d34317bf.jpg",
-        status: "active"
-    },
-    {
-        name: "إذاعة مشاري العفاسي",
-        description: "إذاعة للقرآن الكريم",
-        url: "https://backup.qurango.net/radio/mishary_alafasi",
-        thumb: "https://i1.sndcdn.com/artworks-000019055020-yr9cjc-t200x200.jpg",
-        status: "active"
-    },
-    {
-        name: "إذاعة ناصر القطامي",
-        description: "إذاعة للقرآن الكريم",
-        url: "https://backup.qurango.net/radio/nasser_alqatami",
-        thumb: "https://i1.sndcdn.com/artworks-000096282703-s9wldh-t200x200.jpg",
-        status: "active"
-    },
-    {
-        name: "إذاعة نبيل الرفاعي",
-        description: "إذاعة للقرآن الكريم",
-        url: "https://backup.qurango.net/radio/nabil_al_rifay",
-        thumb: "https://i1.sndcdn.com/artworks-000161140408-wh6nhw-t200x200.jpg",
-        status: "active"
-    },
-    {
-        name: "إذاعة هيثم الجدعاني",
-        description: "إذاعة للقرآن الكريم",
-        url: "https://backup.qurango.net/radio/hitham_aljadani",
-        thumb: "https://ar.islamway.net/uploads/authors/3948.jpg",
-        status: "active"
-    },
-    {
-        name: "إذاعة ياسر الدوسري",
-        description: "إذاعة للقرآن الكريم",
-        url: "https://backup.qurango.net/radio/yasser_aldosari",
-        thumb: "https://www.almowaten.net/wp-content/uploads/2022/06/%D9%8A%D8%A7%D8%B3%D8%B1-%D8%A7%D9%84%D8%AF%D9%88%D8%B3%D8%B1%D9%8A.jpg",
-        status: "active"
-    }
+        const defaultStations = [
+            {
+                name: "إذاعة القرآن الكريم من القاهرة",
+                description: "أشهر إذاعة قرآنية في العالم الإسلامي",
+                url: "https://Qurango.net/radio/tarateel",
+                thumb: "https://tilawah.net/storage/stations/01JJY6EY9GZWYWX5YBZZY1HMB4.jpg",
+                status: "inactive"
+            },
+            {
+                name: "إذاعة القرآن الكريم من السعودية",
+                description: "الإذاعة الرسمية للمملكة العربية السعودية",
+                url: "https://Qurango.net/radio/radio_saudi",
+                thumb: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQ23iTExUL9eGD_I_Ckv8aFeKgmVynI8959A&s",
+                status: "active"
+            },
+            {
+                name: "إذاعة القرآن الكريم من الرياض",
+                description: "إذاعة القرآن الكريم من العاصمة السعودية الرياض",
+                url: "https://Qurango.net/radio/riyadh",
+                thumb: "https://www.almowaten.net/wp-content/uploads/21453.jpg",
+                status: "active"
+            }
+        ];
 
+        let radioStations = [];
+        let currentStationIndex = 0;
+        let currentFilter = 'all';
+        let isPlayerMinimized = true;
+        let lastScrollY = window.scrollY;
+        let isImporting = false;
+        let isPlaying = false;
+        let userInteracted = false;
 
-];
-
-
-        // عناصر DOM
         const audioPlayer = document.getElementById('audio-player');
         const volumeSlider = document.getElementById('volume-slider');
-        const prevBtn = document.getElementById('prev-btn');
-        const nextBtn = document.getElementById('next-btn');
-        const refreshBtn = document.getElementById('refresh-btn');
-        const addStationBtn = document.getElementById('add-station-btn');
-        const updateStationBtn = document.getElementById('update-station-btn');
-        const importBtn = document.getElementById('import-btn');
-        const exportBtn = document.getElementById('export-btn');
-        const exportFileBtn = document.getElementById('export-file-btn');
-        const resetBtn = document.getElementById('reset-btn');
-        const processDataBtn = document.getElementById('process-data-btn');
-        const stationsContainer = document.getElementById('stations-container');
-        const stationName = document.getElementById('current-station-name');
-        const stationDesc = document.getElementById('current-station-desc');
-        const filterButtons = document.querySelectorAll('.filter-btn');
-        const editModal = document.getElementById('edit-station-modal');
-        const dataModal = document.getElementById('data-modal');
-        const closeEditModal = document.getElementById('close-edit-modal');
-        const closeDataModal = document.getElementById('close-data-modal');
-        const dataTextarea = document.getElementById('data-textarea');
-        const dataModalTitle = document.getElementById('data-modal-title');
-        const saveNotification = document.getElementById('save-notification');
-        const progressBar = document.getElementById('progress-bar');
-        const progress = document.getElementById('progress');
         const playerContainer = document.getElementById('player-container');
         const minimizeBtn = document.getElementById('minimize-btn');
         const menuToggle = document.getElementById('menu-toggle');
         const actionsMenu = document.getElementById('actions-menu');
+        const prevStationBtn = document.getElementById('prev-station-btn');
+        const nextStationBtn = document.getElementById('next-station-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        const miniPlayPauseBtn = document.getElementById('mini-play-pause-btn');
+        const miniPrevBtn = document.getElementById('mini-prev-btn');
+        const miniNextBtn = document.getElementById('mini-next-btn');
+        const mainThumb = document.getElementById('main-thumb');
+        const mainTitle = document.getElementById('main-title');
+        const mainDesc = document.getElementById('main-desc');
+        const mainStatus = document.getElementById('main-status');
+        const playerThumb = document.getElementById('player-thumb');
+        const playerName = document.getElementById('player-name');
+        const playerDesc = document.getElementById('player-desc');
+        const currentTimeEl = document.getElementById('current-time');
+        const durationTimeEl = document.getElementById('duration-time');
+        const progressBar = document.getElementById('progress-bar');
+        const progressContainer = document.getElementById('progress-container');
+        const stationsContainer = document.getElementById('stations-container');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const addStationBtn = document.getElementById('add-station-btn');
+        const editCurrentBtn = document.getElementById('edit-current-btn');
+        const deleteCurrentBtn = document.getElementById('delete-current-btn');
+        const importBtn = document.getElementById('import-btn');
+        const exportBtn = document.getElementById('export-btn');
+        const exportFileBtn = document.getElementById('export-file-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const editModal = document.getElementById('edit-station-modal');
+        const dataModal = document.getElementById('data-modal');
+        const closeEditModal = document.getElementById('close-edit-modal');
+        const closeDataModal = document.getElementById('close-data-modal');
+        const updateStationBtn = document.getElementById('update-station-btn');
+        const processDataBtn = document.getElementById('process-data-btn');
+        const saveNotification = document.getElementById('save-notification');
 
-        // عناصر النموذج
-        const newStationName = document.getElementById('new-station-name');
-        const newStationDesc = document.getElementById('new-station-desc');
-        const newStationUrl = document.getElementById('new-station-url');
-        const newStationThumb = document.getElementById('new-station-thumb');
-        const newStationStatus = document.getElementById('new-station-status');
-
-        // عناصر نموذج التعديل
-        const editStationIndex = document.getElementById('edit-station-index');
-        const editStationName = document.getElementById('edit-station-name');
-        const editStationDesc = document.getElementById('edit-station-desc');
-        const editStationUrl = document.getElementById('edit-station-url');
-        const editStationThumb = document.getElementById('edit-station-thumb');
-        const editStationStatus = document.getElementById('edit-station-status');
-
-        let currentStationIndex = 0;
-        let currentFilter = 'all';
-        let radioStations = [];
-        let isImporting = false;
-        let isPlayerMinimized = false;
-
-        // تهيئة المشغل
         function initPlayer() {
-            // تحميل البيانات من localStorage
-            loadFromLocalStorage();
-
-            // تحميل أول محطة افتراضياً
+            loadFromStorage();
             if (radioStations.length > 0) {
                 loadStation(currentStationIndex);
             }
+            renderStationCards();
+            setupEventListeners();
+        }
 
-            // التحكم في مستوى الصوت
+        function setupEventListeners() {
             volumeSlider.addEventListener('input', () => {
                 audioPlayer.volume = volumeSlider.value;
             });
 
-            // زر المحطة السابقة
-            prevBtn.addEventListener('click', () => {
-                if (radioStations.length === 0) return;
-                currentStationIndex = (currentStationIndex - 1 + radioStations.length) % radioStations.length;
-                loadStation(currentStationIndex);
-            });
-
-            // زر المحطة التالية
-            nextBtn.addEventListener('click', () => {
-                if (radioStations.length === 0) return;
-                currentStationIndex = (currentStationIndex + 1) % radioStations.length;
-                loadStation(currentStationIndex);
-            });
-
-            // زر التحديث وفحص الروابط
-            refreshBtn.addEventListener('click', () => {
-                checkAndUpdateLinks();
-            });
-
-            // زر إضافة إذاعة جديدة
-            addStationBtn.addEventListener('click', addNewStation);
-
-            // زر حفظ التعديلات
-            updateStationBtn.addEventListener('click', updateStation);
-
-            // زر استيراد البيانات
-            importBtn.addEventListener('click', () => {
-                openDataModal(true);
-            });
-
-            // زر تصدير البيانات
-            exportBtn.addEventListener('click', () => {
-                openDataModal(false);
-            });
-
-            // زر تصدير البيانات كملف
-            exportFileBtn.addEventListener('click', exportDataToFile);
-
-            // زر استعادة الإعدادات الافتراضية
-            resetBtn.addEventListener('click', resetToDefault);
-
-            // زر معالجة البيانات (استيراد/تصدير)
-            processDataBtn.addEventListener('click', processData);
-
-            // زر إغلاق نافذة التعديل
-            closeEditModal.addEventListener('click', () => {
-                editModal.style.display = 'none';
-            });
-
-            // زر إغلاق نافذة البيانات
-            closeDataModal.addEventListener('click', () => {
-                dataModal.style.display = 'none';
-            });
-
-            // زر تصغير/تكبير المشغل
             minimizeBtn.addEventListener('click', togglePlayerSize);
-
-            // زر عرض/إخفاء القائمة
             menuToggle.addEventListener('click', toggleMenu);
+            
+            playPauseBtn.addEventListener('click', togglePlayPause);
+            miniPlayPauseBtn.addEventListener('click', togglePlayPause);
+            
+            prevStationBtn.addEventListener('click', () => navigateStation(-1));
+            nextStationBtn.addEventListener('click', () => navigateStation(1));
+            prevBtn.addEventListener('click', () => navigateStation(-1));
+            nextBtn.addEventListener('click', () => navigateStation(1));
+            miniPrevBtn.addEventListener('click', () => navigateStation(-1));
+            miniNextBtn.addEventListener('click', () => navigateStation(1));
 
-            // أزرار التصفية
-            filterButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    filterButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-                    currentFilter = button.dataset.filter;
+            editCurrentBtn.addEventListener('click', () => openEditModal(currentStationIndex));
+            deleteCurrentBtn.addEventListener('click', () => deleteStation(currentStationIndex));
+            
+            addStationBtn.addEventListener('click', addNewStation);
+            updateStationBtn.addEventListener('click', updateStation);
+            
+            importBtn.addEventListener('click', () => openDataModal(true));
+            exportBtn.addEventListener('click', () => openDataModal(false));
+            exportFileBtn.addEventListener('click', exportDataToFile);
+            resetBtn.addEventListener('click', resetToDefault);
+            processDataBtn.addEventListener('click', processData);
+            
+            closeEditModal.addEventListener('click', () => editModal.style.display = 'none');
+            closeDataModal.addEventListener('click', () => dataModal.style.display = 'none');
+
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilter = btn.dataset.filter;
                     renderStationCards();
                     actionsMenu.classList.remove('show');
                 });
             });
 
-            // إغلاق القائمة عند النقر خارجها
+            window.addEventListener('scroll', handleScroll);
+            
             document.addEventListener('click', (e) => {
                 if (!actionsMenu.contains(e.target) && !menuToggle.contains(e.target)) {
                     actionsMenu.classList.remove('show');
                 }
             });
 
-            // إنشاء بطاقات المحطات
-            renderStationCards();
+            audioPlayer.addEventListener('timeupdate', updateTime);
+            audioPlayer.addEventListener('play', () => {
+                isPlaying = true;
+                updatePlayPauseButtons();
+            });
+            audioPlayer.addEventListener('pause', () => {
+                isPlaying = false;
+                updatePlayPauseButtons();
+            });
+            audioPlayer.addEventListener('ended', () => {
+                isPlaying = false;
+                updatePlayPauseButtons();
+            });
+            audioPlayer.addEventListener('error', (e) => {
+                console.error('خطأ في تشغيل الصوت:', e);
+                isPlaying = false;
+                updatePlayPauseButtons();
+                alert('حدث خطأ في تشغيل الإذاعة. يرجى التحقق من الرابط أو تجربة إذاعة أخرى.');
+            });
+            
+            progressContainer.addEventListener('click', setProgress);
+            
+            document.addEventListener('click', () => {
+                userInteracted = true;
+            }, { once: true });
         }
 
-        // تحميل المحطة
-        function loadStation(index) {
+        function togglePlayPause() {
+            if (audioPlayer.src && audioPlayer.src !== '') {
+                if (isPlaying) {
+                    audioPlayer.pause();
+                } else {
+                    if (!userInteracted) {
+                        alert('يرجى النقر على أي مكان في الصفحة أولاً لتفعيل الصوت');
+                        userInteracted = true;
+                        return;
+                    }
+                    
+                    const playPromise = audioPlayer.play();
+                    if (playPromise !== undefined) {
+                        playPromise.then(() => {
+                            console.log('تم تشغيل الصوت بنجاح');
+                        }).catch(error => {
+                            console.error('خطأ في التشغيل:', error);
+                            alert('حدث خطأ في تشغيل الإذاعة. يرجى التحقق من الرابط أو تجربة إذاعة أخرى.');
+                        });
+                    }
+                }
+            } else {
+                alert('لا توجد إذاعة محددة للاستماع.');
+            }
+        }
+
+        function updatePlayPauseButtons() {
+            if (isPlaying) {
+                playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                miniPlayPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            } else {
+                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+                miniPlayPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            }
+        }
+
+        function setProgress(e) {
+            const width = this.clientWidth;
+            const clickX = e.offsetX;
+            const duration = audioPlayer.duration;
+            
+            audioPlayer.currentTime = (clickX / width) * duration;
+        }
+
+        function updateTime() {
+            const current = audioPlayer.currentTime;
+            const duration = audioPlayer.duration;
+            
+            currentTimeEl.textContent = formatTime(current);
+            
+            if (duration && !isNaN(duration)) {
+                durationTimeEl.textContent = formatTime(duration);
+                const progressPercent = (current / duration) * 100;
+                progressBar.style.width = `${progressPercent}%`;
+            } else {
+                durationTimeEl.textContent = '--:--';
+                progressBar.style.width = '0%';
+            }
+        }
+
+        function formatTime(seconds) {
+            if (!seconds || isNaN(seconds)) return '0:00';
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function handleScroll() {
+            const currentScrollY = window.scrollY;
+            
+            // عند التمرير لأسفل والمشغل في وضع التكبير، يتم تحويله إلى المصغر بدلاً من الإخفاء
+            if (!isPlayerMinimized && currentScrollY > lastScrollY && currentScrollY > 100) {
+                minimizePlayerOnScroll();
+            } else if (currentScrollY < lastScrollY || currentScrollY <= 100) {
+                playerContainer.classList.remove('hidden');
+            }
+            
+            lastScrollY = currentScrollY;
+        }
+
+        function minimizePlayerOnScroll() {
+            if (!isPlayerMinimized) {
+                isPlayerMinimized = true;
+                playerContainer.classList.add('minimized');
+                minimizeBtn.innerHTML = '<i class="fas fa-expand"></i>';
+                playerContainer.classList.remove('hidden');
+            }
+        }
+
+        function navigateStation(direction) {
             if (radioStations.length === 0) return;
+            currentStationIndex = (currentStationIndex + direction + radioStations.length) % radioStations.length;
+            loadStation(currentStationIndex);
+        }
+
+        function loadStation(index) {
+            if (radioStations.length === 0 || !radioStations[index]) return;
 
             const station = radioStations[index];
-            stationName.textContent = station.name;
-            stationDesc.textContent = station.description;
+            
+            mainTitle.textContent = station.name;
+            mainDesc.textContent = station.description;
+            playerName.textContent = station.name;
+            playerDesc.textContent = station.description;
 
-            // تحديث الصورة المصغرة
-            const thumbElement = document.querySelector('.station-thumb');
-            if (station.thumb) {
-                thumbElement.innerHTML = `<img src="${station.thumb}" alt="${station.name}" onerror="this.parentNode.innerHTML='<i class=\\'fas fa-quran\\'></i>'">`;
-            } else {
-                thumbElement.innerHTML = '<i class="fas fa-quran"></i>';
-            }
+            const statusText = station.status === 'active' ? 'نشطة' : 'غير نشطة';
+            const statusClass = station.status === 'active' ? 'status-active' : 'status-inactive';
+            mainStatus.innerHTML = `<i class="fas fa-circle ${statusClass}"></i> ${statusText}`;
+            mainStatus.className = `station-main-status ${statusClass}`;
 
-            // معالجة الروابط غير المباشرة
-            let audioUrl = station.url;
+            updateThumb(mainThumb, station);
+            updateThumb(playerThumb, station);
 
-            audioPlayer.src = audioUrl;
+            audioPlayer.pause();
+            isPlaying = false;
+            updatePlayPauseButtons();
+            
+            audioPlayer.src = station.url;
             audioPlayer.load();
-
-            // حاول تشغيل الصوت
-            const playPromise = audioPlayer.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    console.log("حدث خطأ أثناء تشغيل الصوت:", error);
-                    // إذا فشل التشغيل، حاول استخدام الرابط الأصلي مباشرة
-                    audioPlayer.src = station.url;
-                    audioPlayer.load();
-                    audioPlayer.play().catch(e => {
-                        console.log("فشل التشغيل بالرابط الأصلي أيضاً:", e);
-                        // إذا فشل التشغيل، قم بتحديث حالة الإذاعة إلى غير نشطة
-                        if (station.status === "active") {
-                            station.status = "inactive";
-                            saveToLocalStorage();
-                            renderStationCards();
-                        }
+            
+            progressBar.style.width = '0%';
+            currentTimeEl.textContent = '0:00';
+            durationTimeEl.textContent = '--:--';
+            
+            if (userInteracted) {
+                const playPromise = audioPlayer.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        isPlaying = true;
+                        updatePlayPauseButtons();
+                    }).catch(error => {
+                        console.log('خطأ في التشغيل التلقائي:', error);
+                        isPlaying = false;
+                        updatePlayPauseButtons();
                     });
-                });
+                }
             }
         }
 
-        // إنشاء بطاقات المحطات
+        function updateThumb(element, station) {
+            if (station.thumb) {
+                element.innerHTML = `<img src="${station.thumb}" alt="${station.name}" onerror="this.parentNode.innerHTML='<i class=\\'fas fa-quran\\'></i>'">`;
+            } else {
+                element.innerHTML = '<i class="fas fa-quran"></i>';
+            }
+        }
+
+        function togglePlayerSize() {
+            isPlayerMinimized = !isPlayerMinimized;
+            
+            if (isPlayerMinimized) {
+                playerContainer.classList.add('minimized');
+                minimizeBtn.innerHTML = '<i class="fas fa-expand"></i>';
+                playerContainer.classList.remove('hidden');
+            } else {
+                playerContainer.classList.remove('minimized');
+                minimizeBtn.innerHTML = '<i class="fas fa-minus"></i>';
+            }
+        }
+
+        function toggleMenu() {
+            actionsMenu.classList.toggle('show');
+        }
+
         function renderStationCards() {
             stationsContainer.innerHTML = '';
 
             if (radioStations.length === 0) {
                 stationsContainer.innerHTML = `
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
-                        <i class="fas fa-music" style="font-size: 3rem; margin-bottom: 20px; display: block; color: #fdbb2d;"></i>
-                        <h3>لا توجد إذاعات متاحة</h3>
-                        <p>استخدم النموذج أعلاه لإضافة إذاعات جديدة</p>
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
+                        <i class="fas fa-music" style="font-size: 4rem; margin-bottom: 20px; display: block; color: #fdbb2d; opacity: 0.5;"></i>
+                        <h3 style="font-size: 1.5rem; margin-bottom: 10px;">لا توجد إذاعات متاحة</h3>
+                        <p style="color: #ccc;">استخدم النموذج أعلاه لإضافة إذاعات جديدة</p>
                     </div>
                 `;
                 return;
@@ -1292,28 +1666,28 @@
 
             const filteredStations = currentFilter === 'all'
                 ? radioStations
-                : radioStations.filter(station => station.status === 'active');
+                : radioStations.filter(s => s.status === 'active');
 
             if (filteredStations.length === 0) {
                 stationsContainer.innerHTML = `
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
-                        <i class="fas fa-filter" style="font-size: 3rem; margin-bottom: 20px; display: block; color: #fdbb2d;"></i>
-                        <h3>لا توجد إذاعات نشطة</h3>
-                        <p>جرب تغيير عامل التصفية أو أضف إذاعات جديدة</p>
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
+                        <i class="fas fa-filter" style="font-size: 4rem; margin-bottom: 20px; display: block; color: #fdbb2d; opacity: 0.5;"></i>
+                        <h3 style="font-size: 1.5rem; margin-bottom: 10px;">لا توجد إذاعات نشطة</h3>
+                        <p style="color: #ccc;">جرب تغيير عامل التصفية أو أضف إذاعات جديدة</p>
                     </div>
                 `;
                 return;
             }
 
-            filteredStations.forEach((station, index) => {
+            filteredStations.forEach((station, filteredIndex) => {
                 const originalIndex = radioStations.findIndex(s => s.url === station.url);
-                const stationCard = document.createElement('div');
-                stationCard.classList.add('station-card');
+                const card = document.createElement('div');
+                card.className = 'station-card';
 
                 const statusText = station.status === 'active' ? 'نشطة' : 'غير نشطة';
                 const statusClass = station.status === 'active' ? 'status-active' : 'status-inactive';
 
-                stationCard.innerHTML = `
+                card.innerHTML = `
                     <div class="station-card-thumb">
                         ${station.thumb ?
                             `<img src="${station.thumb}" alt="${station.name}" onerror="this.parentNode.innerHTML='<i class=\\'fas fa-quran\\'></i>'">` :
@@ -1327,321 +1701,238 @@
                         <h3 class="station-card-title">${station.name}</h3>
                         <p class="station-card-desc">${station.description}</p>
                         <div class="station-card-actions">
-                            <button class="btn btn-sm btn-edit edit-btn" data-index="${originalIndex}">
+                            <button class="btn btn-sm btn-edit" data-index="${originalIndex}">
                                 <i class="fas fa-edit"></i> تعديل
                             </button>
-                            <button class="btn btn-sm btn-danger delete-btn" data-index="${originalIndex}">
+                            <button class="btn btn-sm btn-danger" data-index="${originalIndex}">
                                 <i class="fas fa-trash"></i> حذف
                             </button>
                         </div>
                     </div>
                 `;
 
-                stationCard.addEventListener('click', (e) => {
-                    if (!e.target.closest('.edit-btn') && !e.target.closest('.delete-btn')) {
+                card.addEventListener('click', (e) => {
+                    if (!e.target.closest('.btn')) {
                         currentStationIndex = originalIndex;
                         loadStation(currentStationIndex);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
                     }
                 });
 
-                const editBtn = stationCard.querySelector('.edit-btn');
+                const editBtn = card.querySelector('.btn-edit');
                 editBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     openEditModal(originalIndex);
                 });
 
-                const deleteBtn = stationCard.querySelector('.delete-btn');
+                const deleteBtn = card.querySelector('.btn-danger');
                 deleteBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     deleteStation(originalIndex);
                 });
 
-                stationsContainer.appendChild(stationCard);
+                stationsContainer.appendChild(card);
             });
         }
 
-        // فتح نافذة التعديل
-        function openEditModal(index) {
-            const station = radioStations[index];
-            editStationIndex.value = index;
-            editStationName.value = station.name;
-            editStationDesc.value = station.description;
-            editStationUrl.value = station.url;
-            editStationThumb.value = station.thumb || '';
-            editStationStatus.value = station.status;
+        function addNewStation() {
+            const name = document.getElementById('new-station-name').value.trim();
+            const desc = document.getElementById('new-station-desc').value.trim();
+            const url = document.getElementById('new-station-url').value.trim();
+            const thumb = document.getElementById('new-station-thumb').value.trim();
+            const status = document.getElementById('new-station-status').value;
 
-            editModal.style.display = 'flex';
-        }
-
-        // تحديث المحطة
-        function updateStation() {
-            const index = editStationIndex.value;
-            const name = editStationName.value.trim();
-            const description = editStationDesc.value.trim();
-            const url = editStationUrl.value.trim();
-            const thumb = editStationThumb.value.trim();
-            const status = editStationStatus.value;
-
-            if (!name || !description || !url) {
+            if (!name || !desc || !url) {
                 alert('يرجى ملء جميع الحقول المطلوبة (الاسم، الوصف، الرابط)');
                 return;
             }
 
-            radioStations[index] = {
-                name,
-                description,
-                url,
-                thumb,
-                status
-            };
-
+            radioStations.push({ name, description: desc, url, thumb, status });
+            saveToStorage();
             renderStationCards();
-            saveToLocalStorage();
+            showNotification();
+
+            document.getElementById('new-station-name').value = '';
+            document.getElementById('new-station-desc').value = '';
+            document.getElementById('new-station-url').value = '';
+            document.getElementById('new-station-thumb').value = '';
+            document.getElementById('new-station-status').value = 'active';
+        }
+
+        function openEditModal(index) {
+            const station = radioStations[index];
+            document.getElementById('edit-station-index').value = index;
+            document.getElementById('edit-station-name').value = station.name;
+            document.getElementById('edit-station-desc').value = station.description;
+            document.getElementById('edit-station-url').value = station.url;
+            document.getElementById('edit-station-thumb').value = station.thumb || '';
+            document.getElementById('edit-station-status').value = station.status;
+
+            editModal.style.display = 'flex';
+            menuToggle.classList.add('hidden');
+        }
+
+        function updateStation() {
+            const index = document.getElementById('edit-station-index').value;
+            const name = document.getElementById('edit-station-name').value.trim();
+            const desc = document.getElementById('edit-station-desc').value.trim();
+            const url = document.getElementById('edit-station-url').value.trim();
+            const thumb = document.getElementById('edit-station-thumb').value.trim();
+            const status = document.getElementById('edit-station-status').value;
+
+            if (!name || !desc || !url) {
+                alert('يرجى ملء جميع الحقول المطلوبة');
+                return;
+            }
+
+            radioStations[index] = { name, description: desc, url, thumb, status };
+            saveToStorage();
+            renderStationCards();
+            loadStation(currentStationIndex);
             editModal.style.display = 'none';
-            showSaveNotification();
+            menuToggle.classList.remove('hidden');
+            showNotification();
         }
 
-        // حذف المحطة
         function deleteStation(index) {
-            if (confirm('هل أنت متأكد من أنك تريد حذف هذه الإذاعة؟')) {
-                radioStations.splice(index, 1);
-                renderStationCards();
-                saveToLocalStorage();
-                showSaveNotification();
+            if (!confirm('هل أنت متأكد من أنك تريد حذف هذه الإذاعة؟')) return;
 
-                // إذا كانت المحطة المحذوفة هي المحطة الحالية
-                if (currentStationIndex === index) {
-                    currentStationIndex = 0;
-                    if (radioStations.length > 0) {
-                        loadStation(currentStationIndex);
-                    } else {
-                        stationName.textContent = "لا توجد إذاعات";
-                        stationDesc.textContent = "أضف إذاعات جديدة من النموذج أدناه";
-                        audioPlayer.src = "";
-                    }
-                }
-            }
-        }
-
-        // فحص وتحديث الروابط
-        async function checkAndUpdateLinks() {
-            refreshBtn.disabled = true;
-            refreshBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> جاري الفحص...';
-            progressBar.style.display = 'block';
-
-            let updatedCount = 0;
-            const totalStations = radioStations.length;
-
-            for (let i = 0; i < totalStations; i++) {
-                progress.style.width = `${((i + 1) / totalStations) * 100}%`;
-
-                try {
-                    // محاكاة عملية فحص الرابط
-                    const isLinkWorking = await checkLink(radioStations[i].url);
-
-                    if (isLinkWorking) {
-                        radioStations[i].status = "active";
-                        updatedCount++;
-                    } else {
-                        radioStations[i].status = "inactive";
-                    }
-
-                    // إضافة تأخير لمحاكاة عملية الفحص
-                    await new Promise(resolve => setTimeout(resolve, 500));
-
-                } catch (error) {
-                    console.error(`خطأ في فحص الرابط: ${radioStations[i].url}`, error);
-                    radioStations[i].status = "inactive";
-                }
-            }
-
-            // حفظ التغييرات وعرض النتائج
-            saveToLocalStorage();
+            radioStations.splice(index, 1);
+            saveToStorage();
             renderStationCards();
+            showNotification();
 
-            progressBar.style.display = 'none';
-            refreshBtn.disabled = false;
-            refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> فحص وتحديث الروابط';
-
-            alert(`تم الانتهاء من فحص الروابط!\n\nعدد الإذاعات النشطة: ${updatedCount}\nعدد الإذاعات غير النشطة: ${totalStations - updatedCount}`);
+            if (currentStationIndex === index) {
+                currentStationIndex = 0;
+                if (radioStations.length > 0) {
+                    loadStation(currentStationIndex);
+                } else {
+                    mainTitle.textContent = "لا توجد إذاعات";
+                    mainDesc.textContent = "أضف إذاعات جديدة من النموذج أدناه";
+                    audioPlayer.src = "";
+                }
+            } else if (currentStationIndex > index) {
+                currentStationIndex--;
+            }
         }
 
-        // محاكاة فحص الرابط
-        async function checkLink(url) {
-            // هذه محاكاة للفحص - في الواقع الفعلي يمكن استخدام fetch أو XMLHttpRequest
-            return new Promise((resolve) => {
-                // محاكاة وقت الفحص
-                setTimeout(() => {
-                    // 80% فرصة أن يكون الرابط يعمل (لمحاكاة الواقع)
-                    const isWorking = Math.random() > 0.2;
-                    resolve(isWorking);
-                }, 800);
-            });
-        }
-
-        // فتح نافذة البيانات (استيراد/تصدير)
         function openDataModal(importing) {
             isImporting = importing;
+            const textarea = document.getElementById('data-textarea');
+            const title = document.getElementById('data-modal-title');
 
             if (importing) {
-                dataModalTitle.textContent = "استيراد البيانات";
-                dataTextarea.placeholder = "الصق بيانات JSON هنا للاستيراد";
-                dataTextarea.value = "";
+                title.textContent = "استيراد البيانات";
+                textarea.placeholder = "الصق بيانات JSON هنا للاستيراد";
+                textarea.value = "";
             } else {
-                dataModalTitle.textContent = "تصدير البيانات";
-                dataTextarea.placeholder = "بيانات JSON الخاصة بك ستظهر هنا";
-                dataTextarea.value = JSON.stringify(radioStations, null, 2);
+                title.textContent = "تصدير البيانات";
+                textarea.placeholder = "بيانات JSON الخاصة بك ستظهر هنا";
+                textarea.value = JSON.stringify(radioStations, null, 2);
             }
 
             dataModal.style.display = 'flex';
+            menuToggle.classList.add('hidden');
         }
 
-        // تصدير البيانات كملف نصي
-        function exportDataToFile() {
-            const dataStr = JSON.stringify(radioStations, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-
-            const exportFileDefaultName = 'اذاعات_قرآنية.json';
-
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
-        }
-
-        // معالجة البيانات (استيراد/تصدير)
         function processData() {
-            if (isImporting) {
-                // استيراد البيانات
-                try {
-                    const importedData = JSON.parse(dataTextarea.value);
+            const textarea = document.getElementById('data-textarea');
 
-                    if (Array.isArray(importedData)) {
-                        radioStations = importedData;
-                        saveToLocalStorage();
+            if (isImporting) {
+                try {
+                    const imported = JSON.parse(textarea.value);
+                    if (Array.isArray(imported)) {
+                        radioStations = imported;
+                        saveToStorage();
                         renderStationCards();
+                        currentStationIndex = 0;
+                        if (radioStations.length > 0) {
+                            loadStation(currentStationIndex);
+                        }
                         dataModal.style.display = 'none';
-                        showSaveNotification();
+                        menuToggle.classList.remove('hidden');
+                        showNotification();
                         alert("تم استيراد البيانات بنجاح!");
                     } else {
-                        alert("بيانات غير صالحة. يجب أن تكون البيانات مصفوفة.");
+                        alert("البيانات غير صالحة. يجب أن تكون مصفوفة.");
                     }
-                } catch (error) {
+                } catch (e) {
                     alert("خطأ في تحليل بيانات JSON. يرجى التأكد من صحة البيانات.");
-                    console.error(error);
                 }
             } else {
-                // تصدير البيانات - نسخ إلى الحافظة
-                dataTextarea.select();
+                textarea.select();
                 document.execCommand('copy');
                 alert("تم نسخ البيانات إلى الحافظة!");
             }
         }
 
-        // استعادة الإعدادات الافتراضية
+        function exportDataToFile() {
+            const dataStr = JSON.stringify(radioStations, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+            const link = document.createElement('a');
+            link.setAttribute('href', dataUri);
+            link.setAttribute('download', 'اذاعات_قرآنية.json');
+            link.click();
+            actionsMenu.classList.remove('show');
+        }
+
         function resetToDefault() {
-            if (confirm("هل أنت متأكد من أنك تريد استعادة الإعدادات الافتراضية؟ سيتم فقدان جميع التعديلات الحالية.")) {
-                radioStations = JSON.parse(JSON.stringify(defaultStations));
-                saveToLocalStorage();
-                renderStationCards();
-                currentStationIndex = 0;
-                loadStation(currentStationIndex);
-                showSaveNotification();
-                alert("تم استعادة الإعدادات الافتراضية بنجاح!");
-            }
-        }
+            if (!confirm("هل أنت متأكد من أنك تريد استعادة الإعدادات الافتراضية؟ سيتم فقدان جميع التعديلات الحالية.")) return;
 
-        // إضافة إذاعة جديدة
-        function addNewStation() {
-            const name = newStationName.value.trim();
-            const description = newStationDesc.value.trim();
-            const url = newStationUrl.value.trim();
-            const thumb = newStationThumb.value.trim();
-            const status = newStationStatus.value;
-
-            if (!name || !description || !url) {
-                alert('يرجى ملء جميع الحقول المطلوبة (الاسم، الوصف، الرابط)');
-                return;
-            }
-
-            const newStation = {
-                name,
-                description,
-                url,
-                thumb,
-                status
-            };
-
-            radioStations.push(newStation);
+            radioStations = JSON.parse(JSON.stringify(defaultStations));
+            saveToStorage();
             renderStationCards();
-            saveToLocalStorage();
-            showSaveNotification();
-
-            // مسح حقول النموذج
-            newStationName.value = '';
-            newStationDesc.value = '';
-            newStationUrl.value = '';
-            newStationThumb.value = '';
-            newStationStatus.value = 'active';
+            currentStationIndex = 0;
+            loadStation(currentStationIndex);
+            showNotification();
+            actionsMenu.classList.remove('show');
+            alert("تم استعادة الإعدادات الافتراضية بنجاح!");
         }
 
-        // تبديل حجم المشغل (تصغير/تكبير)
-        function togglePlayerSize() {
-            isPlayerMinimized = !isPlayerMinimized;
-
-            if (isPlayerMinimized) {
-                playerContainer.classList.add('minimized');
-                minimizeBtn.innerHTML = '<i class="fas fa-expand"></i>';
-            } else {
-                playerContainer.classList.remove('minimized');
-                minimizeBtn.innerHTML = '<i class="fas fa-minus"></i>';
-            }
-        }
-
-        // تبديل عرض/إخفاء القائمة
-        function toggleMenu() {
-            actionsMenu.classList.toggle('show');
-        }
-
-        // حفظ البيانات في localStorage
-        function saveToLocalStorage() {
+        function saveToStorage() {
             try {
                 localStorage.setItem('radioStations', JSON.stringify(radioStations));
-                console.log('تم حفظ البيانات في localStorage');
             } catch (e) {
-                console.error('حدث خطأ أثناء حفظ البيانات في localStorage:', e);
+                console.error('خطأ في حفظ البيانات:', e);
             }
         }
 
-        // تحميل البيانات من localStorage
-        function loadFromLocalStorage() {
+        function loadFromStorage() {
             try {
-                const savedStations = localStorage.getItem('radioStations');
-                if (savedStations) {
-                    radioStations = JSON.parse(savedStations);
-                    console.log('تم تحميل البيانات من localStorage');
+                const saved = localStorage.getItem('radioStations');
+                if (saved) {
+                    radioStations = JSON.parse(saved);
                 } else {
-                    // إذا لم توجد بيانات محفوظة، استخدم البيانات الافتراضية
                     radioStations = JSON.parse(JSON.stringify(defaultStations));
-                    saveToLocalStorage();
-                    console.log('تم استخدام البيانات الافتراضية وحفظها في localStorage');
+                    saveToStorage();
                 }
             } catch (e) {
-                console.error('حدث خطأ أثناء تحميل البيانات من localStorage:', e);
-                // في حالة حدوث خطأ، استخدم البيانات الافتراضية
+                console.error('خطأ في تحميل البيانات:', e);
                 radioStations = JSON.parse(JSON.stringify(defaultStations));
             }
         }
 
-        // عرض إشعار الحفظ
-        function showSaveNotification() {
+        function showNotification() {
             saveNotification.style.display = 'block';
             setTimeout(() => {
                 saveNotification.style.display = 'none';
-            }, 2000);
+            }, 2500);
         }
 
-        // بدء التشغيل عند تحميل الصفحة
+        editModal.addEventListener('click', (e) => {
+            if (e.target === editModal) {
+                editModal.style.display = 'none';
+                menuToggle.classList.remove('hidden');
+            }
+        });
+
+        dataModal.addEventListener('click', (e) => {
+            if (e.target === dataModal) {
+                dataModal.style.display = 'none';
+                menuToggle.classList.remove('hidden');
+            }
+        });
+
         window.addEventListener('DOMContentLoaded', initPlayer);
     </script>
 </body>
