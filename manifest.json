@@ -1,0 +1,35 @@
+{
+  "name": "مشغّل الإذاعات القرآنية",
+  "short_name": "Quran Radio",
+  "description": "استمع إلى الإذاعات القرآنية من حول العالم",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#0a1628",
+  "background_color": "#0a1628",
+  "categories": ["music", "education", "lifestyle"],
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    { "src": "GT-QR-icons/all/72x72/GT-QURANRADIO-LOGO.png",   "sizes": "72x72",   "type": "image/png", "purpose": "any" },
+    { "src": "GT-QR-icons/all/96x96/GT-QURANRADIO-LOGO.png",   "sizes": "96x96",   "type": "image/png", "purpose": "any" },
+    { "src": "GT-QR-icons/all/128x128/GT-QURANRADIO-LOGO.png", "sizes": "128x128", "type": "image/png", "purpose": "any" },
+    { "src": "GT-QR-icons/all/144x144/GT-QURANRADIO-LOGO.png", "sizes": "144x144", "type": "image/png", "purpose": "any" },
+    { "src": "GT-QR-icons/all/152x152/GT-QURANRADIO-LOGO.png", "sizes": "152x152", "type": "image/png", "purpose": "any" },
+    { "src": "GT-QR-icons/all/180x180/GT-QURANRADIO-LOGO.png", "sizes": "180x180", "type": "image/png", "purpose": "any" },
+    { "src": "GT-QR-icons/all/192x192/GT-QURANRADIO-LOGO.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "GT-QR-icons/all/384x384/GT-QURANRADIO-LOGO.png", "sizes": "384x384", "type": "image/png", "purpose": "any" },
+    { "src": "GT-QR-icons/all/512x512/GT-QURANRADIO-LOGO.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "GT-QR-icons/all/1024x1024/GT-QURANRADIO-LOGO.png", "sizes": "1024x1024", "type": "image/png", "purpose": "any" }
+  ],
+  "shortcuts": [
+    {
+      "name": "تشغيل سريع",
+      "short_name": "تشغيل",
+      "description": "تشغيل الإذاعة مباشرة",
+      "url": "./?action=play",
+      "icons": [{ "src": "GT-QR-icons/all/96x96/GT-QURANRADIO-LOGO.png", "sizes": "96x96" }]
+    }
+  ]
+}
