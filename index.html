@@ -6,7 +6,7 @@
   <title>مشغّل الإذاعات القرآنية | Quran Radio</title>
 
   <!-- PWA -->
-  <link rel="manifest" id="dynamic-manifest">
+  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0a1628">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -349,7 +349,83 @@
     .btn-sm      { padding: 7px 14px; font-size: .82rem; }
 
     /* ═══════════════════════════════════════════
-       ADD STATION SECTION
+       ADD STATION SECTION - COMPACT VERSION
+    ═══════════════════════════════════════════ */
+    .add-station-compact {
+      background: var(--glass);
+      backdrop-filter: blur(24px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 18px 20px; /* reduced from 30px */
+      margin-bottom: 24px;
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.06);
+    }
+
+    .add-station-compact .section-title {
+      text-align: center;
+      font-size: 1.2rem; /* slightly smaller */
+      font-weight: 800;
+      color: var(--gold2);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .add-station-compact .add-station-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px; /* reduced from 16px */
+    }
+
+    .add-station-compact .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px; /* reduced from 6px */
+    }
+
+    .add-station-compact .form-group label {
+      font-size: .8rem; /* smaller */
+      font-weight: 700;
+      color: rgba(255,255,255,.65);
+    }
+
+    .add-station-compact .form-group input,
+    .add-station-compact .form-group select,
+    .add-station-compact .form-group textarea {
+      padding: 8px 12px; /* reduced */
+      border-radius: var(--radius-sm);
+      border: 1.5px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.07);
+      color: #fff;
+      font-family: var(--font);
+      font-size: .85rem;
+      transition: border-color .2s, box-shadow .2s;
+      outline: none;
+    }
+
+    .add-station-compact .form-group input:focus,
+    .add-station-compact .form-group select:focus,
+    .add-station-compact .form-group textarea:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(240,180,41,.15);
+      background: rgba(255,255,255,.1);
+    }
+
+    .add-station-compact .form-group.full-width {
+      grid-column: span 2;
+    }
+
+    .add-station-compact .form-group.submit-row {
+      grid-column: span 2;
+      display: flex;
+      justify-content: center;
+      margin-top: 8px;
+    }
+
+    /* ═══════════════════════════════════════════
+       STATIONS GRID (unchanged)
     ═══════════════════════════════════════════ */
     .section-card {
       background: var(--glass);
@@ -373,50 +449,6 @@
       gap: 8px;
     }
 
-    .add-station-form {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
-    .form-group.full-width { grid-column: span 2; }
-    .form-group.submit-row { grid-column: span 2; display: flex; justify-content: center; margin-top: 4px; }
-
-    .form-group label {
-      font-size: .85rem;
-      font-weight: 700;
-      color: rgba(255,255,255,.65);
-      letter-spacing: .3px;
-    }
-
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      padding: 12px 16px;
-      border-radius: var(--radius-sm);
-      border: 1.5px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.07);
-      color: #fff;
-      font-family: var(--font);
-      font-size: .95rem;
-      transition: border-color .2s, box-shadow .2s;
-      outline: none;
-    }
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
-      border-color: var(--gold);
-      box-shadow: 0 0 0 3px rgba(240,180,41,.15);
-      background: rgba(255,255,255,.1);
-    }
-    .form-group input::placeholder,
-    .form-group textarea::placeholder { color: rgba(255,255,255,.3); }
-    .form-group select option { background: var(--navy2); color: #fff; }
-
-    /* ═══════════════════════════════════════════
-       STATIONS GRID
-    ═══════════════════════════════════════════ */
     .filter-section {
       display: flex;
       gap: 12px;
@@ -509,7 +541,7 @@
     }
 
     /* ═══════════════════════════════════════════
-       BOTTOM PLAYER
+       BOTTOM PLAYER (unchanged)
     ═══════════════════════════════════════════ */
     .player-container {
       position: fixed;
@@ -528,7 +560,6 @@
       transform: translateY(calc(100% - 72px));
     }
 
-    /* mini bar at top of player when minimized */
     .player-header {
       display: flex;
       align-items: center;
@@ -577,7 +608,6 @@
       text-overflow: ellipsis;
     }
 
-    /* mini controls (visible only when minimized) */
     .mini-controls {
       display: none;
       align-items: center;
@@ -619,7 +649,6 @@
     }
     .minimize-btn:hover { background: rgba(255,255,255,.15); color: #fff; }
 
-    /* player body (full player controls) */
     .player-body {}
 
     .progress-row {
@@ -798,17 +827,25 @@
     .toast.show { opacity: 1; transform: translateX(0); }
 
     /* ═══════════════════════════════════════════
-       FOOTER
+       FOOTER (updated)
     ═══════════════════════════════════════════ */
     .site-footer {
       text-align: center;
       margin-top: 48px;
       padding: 24px;
-      color: rgba(255,255,255,.4);
+      color: rgba(255,255,255,.5);
       font-size: .88rem;
       position: relative; z-index: 1;
+      line-height: 1.8;
     }
-    .site-footer span { color: var(--gold2); font-weight: 700; }
+    .site-footer a {
+      color: var(--gold2);
+      text-decoration: none;
+      transition: .2s;
+    }
+    .site-footer a:hover { text-decoration: underline; }
+    .site-footer .heart { color: #ff5e5e; display: inline-block; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.1);} }
 
     /* ═══════════════════════════════════════════
        EMPTY STATE
@@ -858,9 +895,9 @@
       .station-main-title   { font-size: 1.35rem; }
       .station-main-desc    { font-size: .95rem; }
 
-      .add-station-form      { grid-template-columns: 1fr; }
-      .form-group.full-width { grid-column: span 1; }
-      .form-group.submit-row { grid-column: span 1; }
+      .add-station-compact .add-station-form { grid-template-columns: 1fr; }
+      .add-station-compact .form-group.full-width,
+      .add-station-compact .form-group.submit-row { grid-column: span 1; }
 
       .stations-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
       .station-card-thumb { height: 140px; }
@@ -947,8 +984,8 @@
     </div>
   </section>
 
-  <!-- Add station -->
-  <section class="section-card" aria-label="إضافة إذاعة">
+  <!-- Add station - compact version -->
+  <section class="add-station-compact" aria-label="إضافة إذاعة">
     <h2 class="section-title"><i class="fas fa-plus-circle"></i> إضافة إذاعة جديدة</h2>
     <div class="add-station-form">
       <div class="form-group">
@@ -993,7 +1030,10 @@
   </section>
 
   <footer class="site-footer">
-    🕌 خيركم من تعلّم القرآن وعلّمه &nbsp;|&nbsp; تطوير <span>GNUTUX</span>
+    <p>جميع الحقوق محفوظة © 2026 | مشروع الإذاعات القرآنية</p>
+    <p>صمم بحب <span class="heart">♥️</span> لخدمة القرآن الكريم والحديث النبوي</p>
+    <p>تم التطوير بواسطة: <a href="https://github.com/SalehGNUTUX/GT_QURANRADIO" target="_blank" rel="noopener noreferrer">SalehGNUTUX</a></p>
+    <p style="font-size:0.8rem; margin-top:8px;"><a href="https://github.com/SalehGNUTUX/GT_QURANRADIO" target="_blank">https://github.com/SalehGNUTUX/GT_QURANRADIO</a></p>
   </footer>
 </div>
 
@@ -1117,7 +1157,7 @@
 <!-- ══════════ SCRIPT ══════════ -->
 <script>
 /* ─────────────────────────────────────
-   DEFAULT STATIONS
+   DEFAULT STATIONS (full list from original)
 ───────────────────────────────────── */
 const DEFAULT_STATIONS = [
   { name:"محطة القرءان الكريم من المغرب",       description:"إذاعة القرآن الكريم من المغرب",                    url:"http://virmach1.hajjam.net:8005/;",                                                           thumb:"https://cdn-radiotime-logos.tunein.com/s230781d.png",                                                               status:"active" },
@@ -1251,14 +1291,17 @@ function showToast(msg = 'تم الحفظ بنجاح') {
 }
 
 /* ─────────────────────────────────────
-   THUMB HELPERS
+   THUMB HELPERS (with logo fallback)
 ───────────────────────────────────── */
+const FALLBACK_LOGO = 'GT-QR-icons/all/128x128/GT-QURANRADIO-LOGO.png';
+
 function setThumb(el, station) {
-  if (station && station.thumb) {
+  if (station && station.thumb && station.thumb.trim()) {
     el.innerHTML = `<img src="${station.thumb}" alt="${station.name}"
-      onerror="this.parentNode.innerHTML='<i class=\\'fas fa-quran\\'></i>'">`;
+      onerror="this.onerror=null; this.src='${FALLBACK_LOGO}'; this.onerror=function(){this.parentNode.innerHTML='<i class=\\'fas fa-quran\\'></i>';}">`;
   } else {
-    el.innerHTML = '<i class="fas fa-quran"></i>';
+    el.innerHTML = `<img src="${FALLBACK_LOGO}" alt="logo"
+      onerror="this.parentNode.innerHTML='<i class=\\'fas fa-quran\\'></i>'">`;
   }
 }
 
@@ -1421,7 +1464,7 @@ function drawViz(ctx, w, h, intensity) {
 }
 
 /* ─────────────────────────────────────
-   RENDER CARDS
+   RENDER CARDS (with logo fallback)
 ───────────────────────────────────── */
 function renderCards() {
   stationsGrid.innerHTML = '';
@@ -1447,12 +1490,14 @@ function renderCards() {
     card.className = 'station-card';
     card.setAttribute('role', 'listitem');
 
+    const thumbHtml = s.thumb && s.thumb.trim()
+      ? `<img src="${s.thumb}" alt="${s.name}" loading="lazy"
+           onerror="this.onerror=null; this.src='${FALLBACK_LOGO}'; this.onerror=function(){this.parentNode.innerHTML='<i class=\\'fas fa-quran\\'></i>';}">`
+      : `<img src="${FALLBACK_LOGO}" alt="logo" onerror="this.parentNode.innerHTML='<i class=\\'fas fa-quran\\'></i>'">`;
+
     card.innerHTML = `
       <div class="station-card-thumb">
-        ${s.thumb
-          ? `<img src="${s.thumb}" alt="${s.name}" loading="lazy"
-               onerror="this.parentNode.innerHTML='<i class=\\'fas fa-quran\\'></i>'">`
-          : '<i class="fas fa-quran"></i>'}
+        ${thumbHtml}
       </div>
       <span class="station-status ${active?'status-active':'status-inactive'}">
         <i class="fas fa-circle"></i> ${active?'نشطة':'متوقفة'}
@@ -1647,7 +1692,6 @@ audio.addEventListener('ended', () => { isPlaying = false; updatePlayIcons(); })
 audio.addEventListener('error', () => {
   isPlaying = false;
   updatePlayIcons();
-  // don't spam alert on every network hiccup
 });
 
 audio.addEventListener('play', () => {
@@ -1723,92 +1767,14 @@ document.addEventListener('click', () => {
 }, { once: true });
 
 /* ─────────────────────────────────────
-   PWA MANIFEST (dynamic)
-───────────────────────────────────── */
-function injectManifest() {
-  const manifest = {
-    name:             "مشغّل الإذاعات القرآنية",
-    short_name:       "Quran Radio",
-    description:      "استمع إلى الإذاعات القرآنية من حول العالم",
-    start_url:        "./",
-    scope:            "./",
-    display:          "standalone",
-    orientation:      "portrait-primary",
-    theme_color:      "#0a1628",
-    background_color: "#0a1628",
-    categories:       ["music", "education", "lifestyle"],
-    lang:             "ar",
-    dir:              "rtl",
-    icons: [
-      { src:"GT-QR-icons/all/72x72/GT-QURANRADIO-LOGO.png",   sizes:"72x72",   type:"image/png", purpose:"any" },
-      { src:"GT-QR-icons/all/96x96/GT-QURANRADIO-LOGO.png",   sizes:"96x96",   type:"image/png", purpose:"any" },
-      { src:"GT-QR-icons/all/128x128/GT-QURANRADIO-LOGO.png", sizes:"128x128", type:"image/png", purpose:"any" },
-      { src:"GT-QR-icons/all/144x144/GT-QURANRADIO-LOGO.png", sizes:"144x144", type:"image/png", purpose:"any" },
-      { src:"GT-QR-icons/all/152x152/GT-QURANRADIO-LOGO.png", sizes:"152x152", type:"image/png", purpose:"any" },
-      { src:"GT-QR-icons/all/180x180/GT-QURANRADIO-LOGO.png", sizes:"180x180", type:"image/png", purpose:"any" },
-      { src:"GT-QR-icons/all/192x192/GT-QURANRADIO-LOGO.png", sizes:"192x192", type:"image/png", purpose:"any maskable" },
-      { src:"GT-QR-icons/all/384x384/GT-QURANRADIO-LOGO.png", sizes:"384x384", type:"image/png", purpose:"any" },
-      { src:"GT-QR-icons/all/512x512/GT-QURANRADIO-LOGO.png", sizes:"512x512", type:"image/png", purpose:"any maskable" },
-      { src:"GT-QR-icons/all/1024x1024/GT-QURANRADIO-LOGO.png", sizes:"1024x1024", type:"image/png", purpose:"any" }
-    ],
-    screenshots: [],
-    shortcuts: [
-      {
-        name: "تشغيل سريع",
-        short_name: "تشغيل",
-        description: "تشغيل الإذاعة مباشرة",
-        url: "./?action=play",
-        icons: [{ src:"GT-QR-icons/all/96x96/GT-QURANRADIO-LOGO.png", sizes:"96x96" }]
-      }
-    ]
-  };
-  const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
-  document.getElementById('dynamic-manifest').href = URL.createObjectURL(blob);
-}
-
-/* ─────────────────────────────────────
-   SERVICE WORKER
-───────────────────────────────────── */
-function registerSW() {
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
-  }
-}
-
-/* ─────────────────────────────────────
-   MEDIA SESSION API
-───────────────────────────────────── */
-function updateMediaSession() {
-  if (!('mediaSession' in navigator)) return;
-  const s = stations[currentIdx];
-  if (!s) return;
-  navigator.mediaSession.metadata = new MediaMetadata({
-    title:  s.name,
-    artist: 'إذاعة قرآنية',
-    album:  'مشغّل الإذاعات القرآنية',
-    artwork: s.thumb ? [{ src: s.thumb, sizes: '512x512', type: 'image/jpeg' }]
-                     : [{ src: 'GT-QR-icons/all/512x512/GT-QURANRADIO-LOGO.png', sizes: '512x512', type: 'image/png' }]
-  });
-  navigator.mediaSession.setActionHandler('previoustrack', () => loadStation(currentIdx - 1));
-  navigator.mediaSession.setActionHandler('nexttrack',     () => loadStation(currentIdx + 1));
-  navigator.mediaSession.setActionHandler('play',  () => playAudio());
-  navigator.mediaSession.setActionHandler('pause', () => audio.pause());
-}
-
-audio.addEventListener('play', updateMediaSession);
-
-/* ─────────────────────────────────────
    INIT
 ───────────────────────────────────── */
 window.addEventListener('DOMContentLoaded', () => {
   load();
-  injectManifest();
-  registerSW();
   resizeCanvases();
   window.addEventListener('resize', resizeCanvases, { passive: true });
   loadStation(0, false);
   renderCards();
-  // kick off viz loop even before play (draws static ring)
   mainCtx2d = mainCanvas.getContext('2d');
   miniCtx2d = miniCanvas.getContext('2d');
   startViz();
