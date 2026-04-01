@@ -1,0 +1,21 @@
+{
+  "name": "gt-quranradio",
+  "version": "2.0.0",
+  "description": "مشغّل الإذاعات القرآنية – Quran Radio Player",
+  "private": true,
+  "scripts": {
+    "build:android": "bash scripts/build-android.sh",
+    "build:linux": "bash scripts/build-linux.sh",
+    "build:all": "bash scripts/build-all.sh",
+    "preview": "npx serve www"
+  },
+  "author": "GNUTUX",
+  "license": "MIT",
+  "dependencies": {
+    "@capacitor/android": "6.2.1",
+    "@capacitor/cli": "6.2.1",
+    "@capacitor/core": "6.2.1",
+    "@capacitor/splash-screen": "6.0.4",
+    "@capacitor/status-bar": "6.0.3"
+  }
+}

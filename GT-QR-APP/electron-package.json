@@ -1,0 +1,59 @@
+{
+  "name": "gt-quranradio",
+  "productName": "Quran Radio",
+  "version": "2.0.0",
+  "description": "مشغّل الإذاعات القرآنية",
+  "main": "electron/main.js",
+  "author": {
+    "name": "GNUTUX",
+    "email": "gnutux@example.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/gnutux/gt-quranradio",
+  "scripts": {
+    "start":    "electron .",
+    "dev":      "electron . --inspect=5858",
+    "pack":     "electron-builder --dir",
+    "dist":     "electron-builder",
+    "dist:linux":"electron-builder --linux"
+  },
+  "devDependencies": {
+    "electron":         "^29.0.0",
+    "electron-builder": "^24.13.0"
+  },
+  "build": {
+    "appId":       "net.gnutux.quranradio",
+    "productName": "Quran Radio",
+    "copyright":   "Copyright © 2025 GNUTUX",
+    "files": [
+      "electron/**/*",
+      "www/**/*"
+    ],
+    "directories": {
+      "buildResources": "build-res",
+      "output":         "dist-electron"
+    },
+    "linux": {
+      "target":   ["AppImage", "deb"],
+      "icon":     "www/icons/icon-512.png",
+      "category": "AudioVideo",
+      "synopsis": "مشغّل الإذاعات القرآنية",
+      "desktop": {
+        "Name":            "Quran Radio",
+        "Comment":         "استمع إلى الإذاعات القرآنية",
+        "Categories":      "AudioVideo;Audio;",
+        "StartupWMClass":  "quran-radio"
+      },
+      "artifactName": "QuranRadio-${version}-linux.${ext}"
+    },
+    "appImage": {
+      "license": "LICENSE"
+    },
+    "deb": {
+      "depends": ["libgtk-3-0", "libnotify4", "libnss3", "libxss1", "libxtst6", "xdg-utils", "libatspi2.0-0", "libuuid1"],
+      "afterInstall":  "scripts/after-install.sh",
+      "afterRemove":   "scripts/after-remove.sh"
+    },
+    "publish": null
+  }
+}
