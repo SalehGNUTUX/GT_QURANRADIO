@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-  <title>مشغّل الإذاعات القرآنية | Quran Radio PWA</title>
+  <title>مشغّل الإذاعات القرآنية 2.1 | Quran Radio</title>
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
@@ -15,12 +15,12 @@
   <meta name="application-name" content="Quran Radio">
   <meta name="description" content="استمع إلى أجمل الإذاعات القرآنية">
 
-  <!-- Icons -->
+  <!-- Icons (نستخدم مجلد GT-QR-icons كما في الأصل) -->
   <link rel="icon" type="image/png" sizes="32x32" href="GT-QR-icons/all/32x32/GT-QURANRADIO-LOGO.png">
   <link rel="apple-touch-icon" sizes="180x180" href="GT-QR-icons/all/180x180/GT-QURANRADIO-LOGO.png">
   <link rel="shortcut icon" href="GT-QR-icons/GT-QURANRADIO-LOGO.ico">
 
-  <!-- Fonts -->
+  <!-- Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
@@ -138,7 +138,7 @@
     }
     .site-subtitle { font-size: 0.9rem; color: rgba(255, 255, 255, 0.6); margin-top: 8px; }
 
-    /* ========== FLOATING MENU (desktop & mobile) ========== */
+    /* ========== FLOATING MENU ========== */
     .menu-toggle {
       position: fixed;
       top: 20px;
@@ -183,12 +183,12 @@
         max-width: 1400px;
         margin: 0 auto;
         padding: 20px;
-        padding-bottom: 200px;
+        padding-bottom: 100px;
         position: relative;
         z-index: 1;
       }
 
-      /* Main station card */
+      /* Main station card (البطاقة الرئيسية) */
       .station-display {
         background: var(--glass);
         backdrop-filter: blur(24px);
@@ -274,7 +274,7 @@
       .status-active { color: #4ade80; }
       .station-main-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 
-      /* Desktop player (sticky bottom) */
+      /* Desktop player (شريط سفلي مصغر) */
       .desktop-player {
         position: fixed;
         bottom: 0;
@@ -285,67 +285,92 @@
         -webkit-backdrop-filter: blur(28px);
         border-top: 1px solid var(--border);
         border-radius: 20px 20px 0 0;
-        padding: 16px 24px 20px;
+        padding: 12px 20px;
         z-index: 200;
         box-shadow: 0 -8px 32px rgba(0,0,0,.55);
-      }
-      .desktop-progress-track {
-        width: 100%;
-        height: 5px;
-        background: rgba(255, 255, 255, .2);
-        border-radius: 99px;
-        cursor: pointer;
-        margin: 10px 0;
-      }
-      .desktop-progress-fill {
-        height: 100%;
-        background: linear-gradient(90deg, var(--gold), var(--gold2));
-        border-radius: 99px;
-        width: 0%;
-        transition: width .1s linear;
-      }
-      .desktop-time-row {
         display: flex;
+        align-items: center;
         justify-content: space-between;
-        font-size: .8rem;
-        color: var(--muted);
-        margin: 8px 0;
+        flex-wrap: wrap;
+        gap: 12px;
       }
-      .desktop-main-controls {
+      .desktop-player-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 2;
+        min-width: 180px;
+      }
+      .desktop-player-thumb {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        overflow: hidden;
+        background: var(--navy3);
+        flex-shrink: 0;
+      }
+      .desktop-player-thumb img, .desktop-player-thumb i {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 30px;
-        margin: 15px 0;
       }
-      .desktop-play-btn {
-        width: 70px;
-        height: 70px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, var(--gold), var(--gold2));
-        color: var(--navy);
-        font-size: 1.8rem;
-        border: none;
-        cursor: pointer;
+      .desktop-player-thumb i { font-size: 1.5rem; color: var(--gold); }
+      .desktop-player-text { flex: 1; min-width: 0; }
+      .desktop-player-name {
+        font-size: 0.85rem;
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
-      .desktop-ctrl-btn {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, .1);
+      .desktop-player-desc {
+        font-size: 0.7rem;
+        color: var(--muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .desktop-player-controls {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-shrink: 0;
+      }
+      .desktop-player-controls button {
+        background: none;
         border: none;
         color: white;
         font-size: 1.2rem;
         cursor: pointer;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        transition: all .2s;
       }
-      .desktop-volume-row {
+      .desktop-player-controls button:active { background: rgba(255,255,255,.1); transform: scale(0.9); }
+      .desktop-player-volume {
         display: flex;
         align-items: center;
-        gap: 12px;
-        justify-content: center;
-        margin-top: 10px;
+        gap: 8px;
+        flex-shrink: 0;
+        background: rgba(255,255,255,.08);
+        padding: 4px 12px;
+        border-radius: 40px;
       }
-      .desktop-volume-row input { width: 150px; }
+      .desktop-player-volume input { width: 80px; }
+      .desktop-player-volume button {
+        background: none;
+        border: none;
+        color: var(--gold);
+        font-size: 1rem;
+        cursor: pointer;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+      }
 
       /* Stations grid */
       .stations-grid {
@@ -498,6 +523,63 @@
         margin: 0 auto;
       }
       .mobile-volume input { flex: 1; }
+      .mute-btn {
+        background: none;
+        border: none;
+        color: var(--gold);
+        font-size: 1.2rem;
+        cursor: pointer;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Quick favorites (أربع مفضلات سريعة) */
+      .quick-favs {
+        margin: 20px auto 10px;
+        width: 90%;
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .quick-fav-item {
+        background: rgba(0,0,0,0.5);
+        border-radius: 40px;
+        padding: 6px 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        transition: all .2s;
+        flex: 1;
+        min-width: 70px;
+        justify-content: center;
+        border: 1px solid var(--border);
+      }
+      .quick-fav-item:active { transform: scale(0.96); background: rgba(240,180,41,0.2); }
+      .quick-fav-img {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: var(--navy3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .quick-fav-img i { font-size: 0.9rem; color: var(--gold); }
+      .quick-fav-name {
+        font-size: 0.7rem;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 80px;
+      }
 
       /* Mobile stations list */
       .search-input {
@@ -764,24 +846,23 @@
       <div class="stations-grid" id="stations-grid"></div>
     </div>
 
-    <!-- Desktop Player (sticky bottom) -->
-    <div class="desktop-player">
-      <div class="desktop-progress-track" id="desk-progress-track">
-        <div class="desktop-progress-fill" id="desk-progress-fill"></div>
+    <!-- Desktop Player (شريط سفلي مصغر) -->
+    <div class="desktop-player" id="desktop-player">
+      <div class="desktop-player-info">
+        <div class="desktop-player-thumb" id="desk-player-thumb"><i class="fas fa-quran"></i></div>
+        <div class="desktop-player-text">
+          <div class="desktop-player-name" id="desk-player-name">إذاعة القرآن الكريم</div>
+          <div class="desktop-player-desc" id="desk-player-desc">استمع الآن</div>
+        </div>
       </div>
-      <div class="desktop-time-row">
-        <span id="desk-cur-time">0:00</span>
-        <span id="desk-dur-time">--:--</span>
+      <div class="desktop-player-controls">
+        <button id="desk-mini-prev"><i class="fas fa-step-backward"></i></button>
+        <button id="desk-mini-play"><i class="fas fa-play"></i></button>
+        <button id="desk-mini-next"><i class="fas fa-step-forward"></i></button>
       </div>
-      <div class="desktop-main-controls">
-        <button class="desktop-ctrl-btn" id="desk-prev-track"><i class="fas fa-step-backward"></i></button>
-        <button class="desktop-play-btn" id="desk-play"><i class="fas fa-play"></i></button>
-        <button class="desktop-ctrl-btn" id="desk-next-track"><i class="fas fa-step-forward"></i></button>
-      </div>
-      <div class="desktop-volume-row">
-        <i class="fas fa-volume-down"></i>
+      <div class="desktop-player-volume">
+        <button id="desk-mute-btn"><i class="fas fa-volume-up"></i></button>
         <input type="range" id="desk-volume" min="0" max="1" step="0.02" value="0.7">
-        <i class="fas fa-volume-up"></i>
       </div>
     </div>
 
@@ -820,10 +901,13 @@
           <button class="mobile-ctrl" id="mobile-next"><i class="fas fa-step-forward"></i></button>
         </div>
         <div class="mobile-volume">
-          <i class="fas fa-volume-down"></i>
+          <button class="mute-btn" id="mobile-mute-btn"><i class="fas fa-volume-up"></i></button>
           <input type="range" id="mobile-volume-slider" min="0" max="1" step="0.02" value="0.7">
-          <i class="fas fa-volume-up"></i>
+          <i class="fas fa-volume-up" style="opacity:0.5;"></i>
         </div>
+
+        <!-- Quick Favorites (أربع مفضلات) -->
+        <div class="quick-favs" id="quick-favs"></div>
       </div>
 
       <!-- Page 2: Stations List -->
@@ -984,11 +1068,17 @@ function updateUI() {
   document.getElementById('desk-main-status').innerHTML = `<i class="fas fa-circle ${active ? 'status-active' : 'status-inactive'}"></i> ${active ? 'نشطة' : 'غير نشطة'}`;
   const thumbEl = document.getElementById('desk-main-thumb');
   thumbEl.innerHTML = s.thumb ? `<img src="${s.thumb}" onerror="this.parentNode.innerHTML='<i class=\\'fas fa-quran\\'></i>'">` : '<i class="fas fa-quran"></i>';
+  // Desktop mini player
+  document.getElementById('desk-player-name').innerText = s.name;
+  document.getElementById('desk-player-desc').innerText = s.description;
+  const miniThumb = document.getElementById('desk-player-thumb');
+  miniThumb.innerHTML = s.thumb ? `<img src="${s.thumb}" onerror="this.parentNode.innerHTML='<i class=\\'fas fa-quran\\'></i>'">` : '<i class="fas fa-quran"></i>';
   // Mobile
   document.getElementById('mobile-title').innerText = s.name;
   document.getElementById('mobile-desc').innerText = s.description;
   const mobArt = document.getElementById('mobile-art-img');
   mobArt.innerHTML = s.thumb ? `<img src="${s.thumb}" style="width:100%; height:100%; object-fit:cover; border-radius:24px;" onerror="this.innerHTML='<i class=\\'fas fa-quran\\'></i>'">` : '<i class="fas fa-quran" style="font-size:4rem; color:var(--gold);"></i>';
+  updateQuickFavs();
 }
 
 function loadStation(idx, autoplay = true) {
@@ -1002,6 +1092,7 @@ function loadStation(idx, autoplay = true) {
   if (autoplay && userActed) { playAudio(); }
   saveIdx();
   renderAllLists();
+  updateQuickFavs();
 }
 function playAudio() { if (audio.src) audio.play().catch(() => { }); }
 function togglePlay() { userActed = true; if (isPlaying) audio.pause(); else { initAudioCtx(); playAudio(); } }
@@ -1009,8 +1100,10 @@ function updatePlayButtons() {
   const icon = isPlaying ? 'fa-pause' : 'fa-play';
   const deskPlay = document.getElementById('desk-play');
   const mobPlay = document.getElementById('mobile-play');
+  const deskMiniPlay = document.getElementById('desk-mini-play');
   if (deskPlay) deskPlay.innerHTML = `<i class="fas ${icon}"></i>`;
   if (mobPlay) mobPlay.innerHTML = `<i class="fas ${icon}"></i>`;
+  if (deskMiniPlay) deskMiniPlay.innerHTML = `<i class="fas ${icon}"></i>`;
 }
 audio.addEventListener('play', () => { isPlaying = true; updatePlayButtons(); });
 audio.addEventListener('pause', () => { isPlaying = false; updatePlayButtons(); });
@@ -1125,7 +1218,7 @@ function renderDesktopGrid() {
       </div>`;
     card.addEventListener('click', (e) => { if (!e.target.closest('button')) { currentIdx = idx; loadStation(idx); } });
     card.querySelector('.edit-card').addEventListener('click', (e) => { e.stopPropagation(); openEditModal(idx); });
-    card.querySelector('.fav-card').addEventListener('click', (e) => { e.stopPropagation(); stations[idx].fav = !stations[idx].fav; save(); renderAllLists(); });
+    card.querySelector('.fav-card').addEventListener('click', (e) => { e.stopPropagation(); stations[idx].fav = !stations[idx].fav; save(); renderAllLists(); updateQuickFavs(); });
     card.querySelector('.del-card').addEventListener('click', (e) => { e.stopPropagation(); deleteStation(idx); });
     container.appendChild(card);
   });
@@ -1155,7 +1248,7 @@ function renderMobileList() {
         <button class="row-btn menu" data-idx="${idx}"><i class="fas fa-ellipsis-v"></i></button>
       </div>`;
     row.querySelector('.play-row').addEventListener('click', (e) => { e.stopPropagation(); loadStation(idx); });
-    row.querySelector('.fav').addEventListener('click', (e) => { e.stopPropagation(); stations[idx].fav = !stations[idx].fav; save(); renderAllLists(); });
+    row.querySelector('.fav').addEventListener('click', (e) => { e.stopPropagation(); stations[idx].fav = !stations[idx].fav; save(); renderAllLists(); updateQuickFavs(); });
     row.querySelector('.menu').addEventListener('click', (e) => { e.stopPropagation(); pendingStationIdx = idx; document.getElementById('action-sheet').classList.add('open'); });
     row.addEventListener('click', () => { loadStation(idx); });
     container.appendChild(row);
@@ -1165,6 +1258,33 @@ function renderMobileList() {
 function renderAllLists() { renderDesktopGrid(); renderMobileList(); }
 
 function escapeHtml(str) { return String(str).replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
+
+// ========== QUICK FAVORITES (MOBILE) ==========
+function updateQuickFavs() {
+  const container = document.getElementById('quick-favs');
+  if (!container) return;
+  const favs = stations.filter(s => s.fav === true);
+  const toShow = favs.slice(0, 4);
+  container.innerHTML = '';
+  if (toShow.length === 0) {
+    container.innerHTML = '<div style="text-align:center; width:100%; color:var(--muted); font-size:0.7rem;">✨ أضف مفضلة لظهورها هنا</div>';
+    return;
+  }
+  toShow.forEach(s => {
+    const idx = stations.indexOf(s);
+    const item = document.createElement('div');
+    item.className = 'quick-fav-item';
+    item.innerHTML = `
+      <div class="quick-fav-img">${s.thumb ? `<img src="${s.thumb}" width="28" height="28" style="border-radius:50%; object-fit:cover;">` : '<i class="fas fa-quran"></i>'}</div>
+      <span class="quick-fav-name">${s.name.length > 12 ? s.name.slice(0,10)+'…' : s.name}</span>
+    `;
+    item.addEventListener('click', (e) => {
+      e.stopPropagation();
+      loadStation(idx);
+    });
+    container.appendChild(item);
+  });
+}
 
 // ========== CRUD ==========
 function openEditModal(idx) {
@@ -1179,14 +1299,14 @@ function openEditModal(idx) {
 }
 function deleteStation(idx) {
   if (!confirm('حذف الإذاعة؟')) return;
-  stations.splice(idx, 1); save(); renderAllLists();
+  stations.splice(idx, 1); save(); renderAllLists(); updateQuickFavs();
   if (currentIdx === idx && stations.length) loadStation(0, false);
   else if (currentIdx > idx) currentIdx--;
   toast('تم الحذف');
 }
 function addStation(name, desc, url, thumb, status) {
   stations.push({ name, description: desc, url, thumb, status, fav: false });
-  save(); renderAllLists(); toast('تمت الإضافة');
+  save(); renderAllLists(); updateQuickFavs(); toast('تمت الإضافة');
 }
 
 // ========== EVENT LISTENERS ==========
@@ -1200,7 +1320,7 @@ document.getElementById('save-edit').addEventListener('click', () => {
     status: document.getElementById('edit-status').value,
     fav: stations[idx].fav
   };
-  save(); renderAllLists(); loadStation(currentIdx, false);
+  save(); renderAllLists(); loadStation(currentIdx, false); updateQuickFavs();
   document.getElementById('edit-modal').classList.remove('open');
   toast('تم التعديل');
 });
@@ -1240,8 +1360,8 @@ document.querySelectorAll('.filter-btn, .filter-tab').forEach(btn => {
   });
 });
 document.getElementById('mobile-search').addEventListener('input', (e) => { searchQuery = e.target.value; renderMobileList(); });
-document.getElementById('reset-btn')?.addEventListener('click', () => { if (confirm('استعادة الافتراضي؟')) { stations = JSON.parse(JSON.stringify(DEFAULT_STATIONS)); save(); renderAllLists(); loadStation(0); } });
-document.getElementById('mob-reset')?.addEventListener('click', () => { if (confirm('استعادة الافتراضي؟')) { stations = JSON.parse(JSON.stringify(DEFAULT_STATIONS)); save(); renderAllLists(); loadStation(0); } });
+document.getElementById('reset-btn')?.addEventListener('click', () => { if (confirm('استعادة الافتراضي؟')) { stations = JSON.parse(JSON.stringify(DEFAULT_STATIONS)); save(); renderAllLists(); loadStation(0); updateQuickFavs(); } });
+document.getElementById('mob-reset')?.addEventListener('click', () => { if (confirm('استعادة الافتراضي؟')) { stations = JSON.parse(JSON.stringify(DEFAULT_STATIONS)); save(); renderAllLists(); loadStation(0); updateQuickFavs(); } });
 document.getElementById('export-file-btn')?.addEventListener('click', () => { const a = document.createElement('a'); a.href = 'data:application/json,' + encodeURIComponent(JSON.stringify(stations)); a.download = 'quran_radios.json'; a.click(); });
 document.getElementById('mob-export')?.addEventListener('click', () => { const a = document.createElement('a'); a.href = 'data:application/json,' + encodeURIComponent(JSON.stringify(stations)); a.download = 'quran_radios.json'; a.click(); });
 function openDataModal(importing) {
@@ -1251,7 +1371,7 @@ function openDataModal(importing) {
   document.getElementById('data-modal').classList.add('open');
   document.getElementById('process-data').onclick = () => {
     if (importing) {
-      try { const arr = JSON.parse(ta.value); if (Array.isArray(arr)) { stations = arr; save(); renderAllLists(); loadStation(0); toast('تم الاستيراد'); } else throw new Error(); } catch (e) { toast('JSON غير صالح'); }
+      try { const arr = JSON.parse(ta.value); if (Array.isArray(arr)) { stations = arr; save(); renderAllLists(); loadStation(0); updateQuickFavs(); toast('تم الاستيراد'); } else throw new Error(); } catch (e) { toast('JSON غير صالح'); }
     } else { ta.select(); document.execCommand('copy'); toast('تم النسخ'); }
     document.getElementById('data-modal').classList.remove('open');
   };
@@ -1282,13 +1402,47 @@ document.getElementById('desk-prev').addEventListener('click', () => loadStation
 document.getElementById('desk-next').addEventListener('click', () => loadStation(currentIdx + 1));
 document.getElementById('mobile-prev').addEventListener('click', () => loadStation(currentIdx - 1));
 document.getElementById('mobile-next').addEventListener('click', () => loadStation(currentIdx + 1));
-document.getElementById('desk-prev-track').addEventListener('click', () => loadStation(currentIdx - 1));
-document.getElementById('desk-next-track').addEventListener('click', () => loadStation(currentIdx + 1));
-document.getElementById('desk-play').addEventListener('click', togglePlay);
+document.getElementById('desk-prev-track')?.addEventListener('click', () => loadStation(currentIdx - 1));
+document.getElementById('desk-next-track')?.addEventListener('click', () => loadStation(currentIdx + 1));
+document.getElementById('desk-mini-prev').addEventListener('click', () => loadStation(currentIdx - 1));
+document.getElementById('desk-mini-next').addEventListener('click', () => loadStation(currentIdx + 1));
+document.getElementById('desk-mini-play').addEventListener('click', togglePlay);
+document.getElementById('desk-play')?.addEventListener('click', togglePlay);
 document.getElementById('mobile-play').addEventListener('click', togglePlay);
 document.getElementById('desk-volume').addEventListener('input', (e) => audio.volume = +e.target.value);
 document.getElementById('mobile-volume-slider').addEventListener('input', (e) => audio.volume = +e.target.value);
-document.getElementById('desk-progress-track').addEventListener('click', (e) => { if (audio.duration) audio.currentTime = (e.offsetX / e.target.clientWidth) * audio.duration; });
+// Mute buttons
+function setMuteButton(btn, isMuted) {
+  if (!btn) return;
+  if (isMuted) btn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+  else btn.innerHTML = '<i class="fas fa-volume-up"></i>';
+}
+let isMuted = false;
+let previousVolume = 0.7;
+function toggleMute() {
+  if (isMuted) {
+    audio.volume = previousVolume;
+    isMuted = false;
+  } else {
+    previousVolume = audio.volume;
+    audio.volume = 0;
+    isMuted = true;
+  }
+  const deskMute = document.getElementById('desk-mute-btn');
+  const mobMute = document.getElementById('mobile-mute-btn');
+  setMuteButton(deskMute, isMuted);
+  setMuteButton(mobMute, isMuted);
+  if (!isMuted && audio.volume > 0) {
+    document.getElementById('desk-volume').value = audio.volume;
+    document.getElementById('mobile-volume-slider').value = audio.volume;
+  } else if (isMuted) {
+    document.getElementById('desk-volume').value = 0;
+    document.getElementById('mobile-volume-slider').value = 0;
+  }
+}
+document.getElementById('desk-mute-btn').addEventListener('click', toggleMute);
+document.getElementById('mobile-mute-btn').addEventListener('click', toggleMute);
+document.getElementById('desk-progress-track')?.addEventListener('click', (e) => { if (audio.duration) audio.currentTime = (e.offsetX / e.target.clientWidth) * audio.duration; });
 document.getElementById('mobile-progress-track').addEventListener('click', (e) => { if (audio.duration) audio.currentTime = (e.offsetX / e.target.clientWidth) * audio.duration; });
 document.getElementById('desk-edit').addEventListener('click', () => openEditModal(currentIdx));
 document.getElementById('desk-delete').addEventListener('click', () => deleteStation(currentIdx));
@@ -1318,6 +1472,8 @@ if (mobilePlayerPage) {
         const deskVol = document.getElementById('desk-volume');
         if (mobileVol) mobileVol.value = newVol;
         if (deskVol) deskVol.value = newVol;
+        if (newVol === 0) { isMuted = true; setMuteButton(document.getElementById('desk-mute-btn'), true); setMuteButton(document.getElementById('mobile-mute-btn'), true); }
+        else if (isMuted) { isMuted = false; setMuteButton(document.getElementById('desk-mute-btn'), false); setMuteButton(document.getElementById('mobile-mute-btn'), false); }
       }
     }
     touchStartX = 0;
@@ -1332,6 +1488,7 @@ window.addEventListener('DOMContentLoaded', () => {
   if (mainCanvas) { resizeCanvases(); window.addEventListener('resize', resizeCanvases); }
   loadStation(currentIdx, false);
   renderAllLists();
+  updateQuickFavs();
   startViz();
   document.addEventListener('click', () => { userActed = true; initAudioCtx(); }, { once: true });
 });
