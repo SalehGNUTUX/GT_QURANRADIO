@@ -6,7 +6,7 @@
   <title>مشغّل الإذاعات القرآنية 2.1 | Quran Radio</title>
 
   <!-- PWA -->
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" id="dynamic-manifest">
   <meta name="theme-color" content="#0a1628">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,10 +15,11 @@
   <meta name="application-name" content="Quran Radio">
   <meta name="description" content="استمع إلى أجمل الإذاعات القرآنية">
 
-  <!-- Icons (نستخدم مجلد GT-QR-icons كما في الأصل) -->
-  <link rel="icon" type="image/png" sizes="32x32" href="GT-QR-icons/all/32x32/GT-QURANRADIO-LOGO.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="GT-QR-icons/all/180x180/GT-QURANRADIO-LOGO.png">
-  <link rel="shortcut icon" href="GT-QR-icons/GT-QURANRADIO-LOGO.ico">
+  <!-- Icons (PWA) - using app/icons/ folder -->
+  <link rel="icon" type="image/png" sizes="32x32" href="app/icons/icon-32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="app/icons/icon-96.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="app/icons/icon-180.png">
+  <link rel="shortcut icon" href="app/icons/icon-32.png">
 
   <!-- Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -188,7 +189,7 @@
         z-index: 1;
       }
 
-      /* Main station card (البطاقة الرئيسية) */
+      /* Main station card */
       .station-display {
         background: var(--glass);
         backdrop-filter: blur(24px);
@@ -274,7 +275,38 @@
       .status-active { color: #4ade80; }
       .station-main-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 
-      /* Desktop player (شريط سفلي مصغر) */
+      /* Desktop filter buttons (modern) */
+      .filter-section {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        margin: 24px 0;
+      }
+      .filter-btn {
+        padding: 10px 28px;
+        border-radius: 60px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(4px);
+        border: 1px solid rgba(240, 180, 41, 0.3);
+        color: var(--muted);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .filter-btn:hover {
+        border-color: var(--gold);
+        color: #fff;
+        transform: translateY(-2px);
+      }
+      .filter-btn.active {
+        background: linear-gradient(135deg, var(--gold), var(--gold2));
+        color: var(--navy);
+        border-color: transparent;
+        box-shadow: 0 6px 14px rgba(240, 180, 41, 0.3);
+      }
+
+      /* Desktop player (mini bar) */
       .desktop-player {
         position: fixed;
         bottom: 0;
@@ -282,7 +314,6 @@
         right: 0;
         background: rgba(7, 14, 28, .98);
         backdrop-filter: blur(28px);
-        -webkit-backdrop-filter: blur(28px);
         border-top: 1px solid var(--border);
         border-radius: 20px 20px 0 0;
         padding: 12px 20px;
@@ -537,49 +568,41 @@
         justify-content: center;
       }
 
-      /* Quick favorites (أربع مفضلات سريعة) */
-      .quick-favs {
-        margin: 20px auto 10px;
-        width: 90%;
+      /* Quick favorites (now as full list) */
+      .quick-favs-list {
+        margin: 20px 0 10px;
         display: flex;
-        justify-content: space-between;
-        gap: 8px;
-        flex-wrap: wrap;
+        flex-direction: column;
+        gap: 10px;
       }
-      .quick-fav-item {
-        background: rgba(0,0,0,0.5);
-        border-radius: 40px;
-        padding: 6px 12px;
-        display: inline-flex;
+      .quick-fav-row {
+        display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 12px;
+        padding: 10px;
+        background: var(--glass);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border2);
         cursor: pointer;
         transition: all .2s;
-        flex: 1;
-        min-width: 70px;
-        justify-content: center;
-        border: 1px solid var(--border);
       }
-      .quick-fav-item:active { transform: scale(0.96); background: rgba(240,180,41,0.2); }
-      .quick-fav-img {
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        object-fit: cover;
+      .quick-fav-row:active { background: rgba(240,180,41,.1); transform: scale(0.98); }
+      .quick-fav-row .row-thumb {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        overflow: hidden;
         background: var(--navy3);
         display: flex;
         align-items: center;
         justify-content: center;
+        flex-shrink: 0;
       }
-      .quick-fav-img i { font-size: 0.9rem; color: var(--gold); }
-      .quick-fav-name {
-        font-size: 0.7rem;
-        font-weight: 600;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 80px;
-      }
+      .quick-fav-row .row-thumb img { width: 100%; height: 100%; object-fit: cover; }
+      .quick-fav-row .row-thumb i { font-size: 1.5rem; color: var(--gold); }
+      .quick-fav-row .row-info { flex: 1; min-width: 0; }
+      .quick-fav-row .row-name { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .quick-fav-row .row-desc { font-size: .75rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
       /* Mobile stations list */
       .search-input {
@@ -776,6 +799,36 @@
       color: rgba(255, 255, 255, .4);
       font-size: .8rem;
     }
+    .undo-toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--navy2);
+      border: 1px solid var(--gold);
+      border-radius: 60px;
+      padding: 12px 24px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      z-index: 4000;
+      backdrop-filter: blur(12px);
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+    .undo-toast.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .undo-toast button {
+      background: var(--gold);
+      border: none;
+      padding: 6px 16px;
+      border-radius: 40px;
+      font-weight: bold;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -793,7 +846,7 @@
   <div class="container">
     <header class="site-header">
       <div class="logo-wrap">
-        <img src="GT-QR-icons/all/48x48/GT-QURANRADIO-LOGO.png" class="logo-img" alt="شعار">
+        <img src="app/icons/icon-96.png" class="logo-img" alt="شعار" onerror="this.src='GT-QR-icons/all/128x128/GT-QURANRADIO-LOGO.png'">
         <span class="logo-text">مشغّل الإذاعات القرآنية</span>
       </div>
       <p class="site-subtitle">استمع إلى أجمل التلاوات من إذاعات إسلامية حول العالم</p>
@@ -838,7 +891,7 @@
     <!-- All stations grid -->
     <div style="background:var(--glass); border-radius:var(--radius-xl); padding:20px; margin-bottom:24px;">
       <h2 style="text-align:center; color:var(--gold2);">📡 جميع الإذاعات</h2>
-      <div style="display:flex; justify-content:center; gap:12px; margin:16px 0;">
+      <div class="filter-section">
         <button class="filter-btn active" data-filter="all">الكل</button>
         <button class="filter-btn" data-filter="active">النشطة فقط</button>
         <button class="filter-btn" data-filter="fav">المفضلة</button>
@@ -846,7 +899,7 @@
       <div class="stations-grid" id="stations-grid"></div>
     </div>
 
-    <!-- Desktop Player (شريط سفلي مصغر) -->
+    <!-- Desktop Player -->
     <div class="desktop-player" id="desktop-player">
       <div class="desktop-player-info">
         <div class="desktop-player-thumb" id="desk-player-thumb"><i class="fas fa-quran"></i></div>
@@ -868,8 +921,8 @@
 
     <div class="footer">
       <p>جميع الحقوق محفوظة © 2026 | مشروع الإذاعات القرآنية</p>
+      <p>مشروع مفتوح المصدر برخصة GPL-3.0 | تطوير <strong>SalehGNUTUX</strong></p>
       <p>صمم بحب ♥️ لخدمة القرآن الكريم والحديث النبوي</p>
-      <p>تم التطوير بواسطة: <a href="https://github.com/SalehGNUTUX/GT_QURANRADIO" target="_blank" style="color:var(--gold2);">SalehGNUTUX</a></p>
     </div>
   </div>
 </div>
@@ -906,8 +959,8 @@
           <i class="fas fa-volume-up" style="opacity:0.5;"></i>
         </div>
 
-        <!-- Quick Favorites (أربع مفضلات) -->
-        <div class="quick-favs" id="quick-favs"></div>
+        <!-- المفضلات كقائمة كاملة -->
+        <div class="quick-favs-list" id="quick-favs-list"></div>
       </div>
 
       <!-- Page 2: Stations List -->
@@ -933,13 +986,20 @@
           <button class="btn" id="mob-add-btn">إضافة</button>
         </div>
         <div class="settings-card">
-          <h3>⚙️ الإعدادات</h3>
+          <h3>📱 مشاركة</h3>
+          <button class="btn btn-info" id="mob-share-station"><i class="fas fa-share-alt"></i> مشاركة الإذاعة الحالية</button>
+          <button class="btn btn-info" id="mob-share-app"><i class="fas fa-code-branch"></i> مشاركة التطبيق (GitHub)</button>
+        </div>
+        <div class="settings-card">
+          <h3>⚙️ إدارة البيانات</h3>
           <button class="btn btn-info" id="mob-import">استيراد JSON</button>
           <button class="btn btn-success" id="mob-export">تصدير JSON</button>
           <button class="btn btn-danger" id="mob-reset">استعادة الافتراضي</button>
-          <button class="btn" id="mob-share-app"><i class="fas fa-share-alt"></i> مشاركة التطبيق</button>
         </div>
-        <div class="footer" style="margin-top:20px;">© 2026 | مشغل الإذاعات القرآنية</div>
+        <div class="footer" style="margin-top:20px;">
+          <p>© 2026 | مشغل الإذاعات القرآنية</p>
+          <p>مفتوح المصدر GPL-3.0 | SalehGNUTUX</p>
+        </div>
       </div>
     </div>
 
@@ -959,6 +1019,12 @@
     <button class="btn btn-danger" id="action-delete" style="width:100%;"><i class="fas fa-trash"></i> حذف</button>
     <button class="btn" id="action-cancel" style="width:100%; margin-top:10px; background:rgba(255,255,255,.1);">إلغاء</button>
   </div>
+</div>
+
+<!-- Undo Toast -->
+<div id="undo-toast" class="undo-toast">
+  <span id="undo-msg">تم الحذف</span>
+  <button id="undo-btn">تراجع</button>
 </div>
 
 <!-- Common modals -->
@@ -990,7 +1056,7 @@
 <div class="toast" id="toast">تم الحفظ</div>
 
 <script>
-// ========== DEFAULT STATIONS (full list) ==========
+// ========== DEFAULT STATIONS ==========
 const DEFAULT_STATIONS = [
   { name: "محطة القرءان الكريم من المغرب", description: "إذاعة القرآن الكريم من المغرب.", url: "http://virmach1.hajjam.net:8005/;", thumb: "https://cdn-radiotime-logos.tunein.com/s230781d.png", status: "active", fav: false },
   { name: "راديو وياك", description: "وين ما تروح وياك", url: "https://work.radiowayak.org/listen/live/live.mp3", thumb: "https://cdn-profiles.tunein.com/s348494/images/logod.jpg", status: "active", fav: false },
@@ -1039,11 +1105,19 @@ let currentFilter = 'all';
 let searchQuery = '';
 let pendingStationIdx = null;
 
+// Undo delete
+let deletedItem = null;
+let deletedIndex = -1;
+let undoTimeout = null;
+
 let audioCtx = null, analyser = null, sourceNode = null, vizId = null;
 let mainCanvas, mobileCanvas, mainCtx, mobileCtx;
 
 const audio = document.getElementById('audio-player');
 const toastEl = document.getElementById('toast');
+const undoToast = document.getElementById('undo-toast');
+const undoMsg = document.getElementById('undo-msg');
+const undoBtn = document.getElementById('undo-btn');
 
 function toast(msg) { toastEl.textContent = msg; toastEl.classList.add('show'); setTimeout(() => toastEl.classList.remove('show'), 2500); }
 function save() { try { localStorage.setItem('qr_stations', JSON.stringify(stations)); } catch(e){} }
@@ -1078,7 +1152,7 @@ function updateUI() {
   document.getElementById('mobile-desc').innerText = s.description;
   const mobArt = document.getElementById('mobile-art-img');
   mobArt.innerHTML = s.thumb ? `<img src="${s.thumb}" style="width:100%; height:100%; object-fit:cover; border-radius:24px;" onerror="this.innerHTML='<i class=\\'fas fa-quran\\'></i>'">` : '<i class="fas fa-quran" style="font-size:4rem; color:var(--gold);"></i>';
-  updateQuickFavs();
+  updateQuickFavsList();
 }
 
 function loadStation(idx, autoplay = true) {
@@ -1092,7 +1166,7 @@ function loadStation(idx, autoplay = true) {
   if (autoplay && userActed) { playAudio(); }
   saveIdx();
   renderAllLists();
-  updateQuickFavs();
+  updateQuickFavsList();
 }
 function playAudio() { if (audio.src) audio.play().catch(() => { }); }
 function togglePlay() { userActed = true; if (isPlaying) audio.pause(); else { initAudioCtx(); playAudio(); } }
@@ -1218,8 +1292,8 @@ function renderDesktopGrid() {
       </div>`;
     card.addEventListener('click', (e) => { if (!e.target.closest('button')) { currentIdx = idx; loadStation(idx); } });
     card.querySelector('.edit-card').addEventListener('click', (e) => { e.stopPropagation(); openEditModal(idx); });
-    card.querySelector('.fav-card').addEventListener('click', (e) => { e.stopPropagation(); stations[idx].fav = !stations[idx].fav; save(); renderAllLists(); updateQuickFavs(); });
-    card.querySelector('.del-card').addEventListener('click', (e) => { e.stopPropagation(); deleteStation(idx); });
+    card.querySelector('.fav-card').addEventListener('click', (e) => { e.stopPropagation(); stations[idx].fav = !stations[idx].fav; save(); renderAllLists(); updateQuickFavsList(); });
+    card.querySelector('.del-card').addEventListener('click', (e) => { e.stopPropagation(); deleteStationWithUndo(idx); });
     container.appendChild(card);
   });
 }
@@ -1248,7 +1322,7 @@ function renderMobileList() {
         <button class="row-btn menu" data-idx="${idx}"><i class="fas fa-ellipsis-v"></i></button>
       </div>`;
     row.querySelector('.play-row').addEventListener('click', (e) => { e.stopPropagation(); loadStation(idx); });
-    row.querySelector('.fav').addEventListener('click', (e) => { e.stopPropagation(); stations[idx].fav = !stations[idx].fav; save(); renderAllLists(); updateQuickFavs(); });
+    row.querySelector('.fav').addEventListener('click', (e) => { e.stopPropagation(); stations[idx].fav = !stations[idx].fav; save(); renderAllLists(); updateQuickFavsList(); });
     row.querySelector('.menu').addEventListener('click', (e) => { e.stopPropagation(); pendingStationIdx = idx; document.getElementById('action-sheet').classList.add('open'); });
     row.addEventListener('click', () => { loadStation(idx); });
     container.appendChild(row);
@@ -1259,32 +1333,78 @@ function renderAllLists() { renderDesktopGrid(); renderMobileList(); }
 
 function escapeHtml(str) { return String(str).replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
 
-// ========== QUICK FAVORITES (MOBILE) ==========
-function updateQuickFavs() {
-  const container = document.getElementById('quick-favs');
+// ========== QUICK FAVORITES (FULL LIST) ==========
+function updateQuickFavsList() {
+  const container = document.getElementById('quick-favs-list');
   if (!container) return;
   const favs = stations.filter(s => s.fav === true);
-  const toShow = favs.slice(0, 4);
-  container.innerHTML = '';
-  if (toShow.length === 0) {
-    container.innerHTML = '<div style="text-align:center; width:100%; color:var(--muted); font-size:0.7rem;">✨ أضف مفضلة لظهورها هنا</div>';
+  if (favs.length === 0) {
+    container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted);">✨ لا توجد مفضلات. أضف مفضلة من قائمة الإذاعات</div>';
     return;
   }
-  toShow.forEach(s => {
+  container.innerHTML = '';
+  favs.forEach(s => {
     const idx = stations.indexOf(s);
-    const item = document.createElement('div');
-    item.className = 'quick-fav-item';
-    item.innerHTML = `
-      <div class="quick-fav-img">${s.thumb ? `<img src="${s.thumb}" width="28" height="28" style="border-radius:50%; object-fit:cover;">` : '<i class="fas fa-quran"></i>'}</div>
-      <span class="quick-fav-name">${s.name.length > 12 ? s.name.slice(0,10)+'…' : s.name}</span>
+    const row = document.createElement('div');
+    row.className = 'quick-fav-row';
+    row.innerHTML = `
+      <div class="row-thumb">${s.thumb ? `<img src="${s.thumb}" onerror="this.parentNode.innerHTML='<i class=\\'fas fa-quran\\'></i>'">` : '<i class="fas fa-quran"></i>'}</div>
+      <div class="row-info">
+        <div class="row-name">${escapeHtml(s.name)}</div>
+        <div class="row-desc">${escapeHtml(s.description)}</div>
+      </div>
+      <div class="row-actions">
+        <button class="row-btn play-row"><i class="fas fa-play"></i></button>
+      </div>
     `;
-    item.addEventListener('click', (e) => {
-      e.stopPropagation();
-      loadStation(idx);
-    });
-    container.appendChild(item);
+    row.querySelector('.play-row').addEventListener('click', (e) => { e.stopPropagation(); loadStation(idx); });
+    row.addEventListener('click', () => { loadStation(idx); });
+    container.appendChild(row);
   });
 }
+
+// ========== DELETE WITH UNDO ==========
+function deleteStationWithUndo(idx) {
+  if (idx < 0 || idx >= stations.length) return;
+  const station = stations[idx];
+  deletedItem = { ...station };
+  deletedIndex = idx;
+  stations.splice(idx, 1);
+  save();
+  renderAllLists();
+  updateQuickFavsList();
+  if (currentIdx === idx && stations.length) {
+    currentIdx = 0;
+    loadStation(0, false);
+  } else if (currentIdx > idx) {
+    currentIdx--;
+  }
+  saveIdx();
+  undoMsg.innerText = `🗑️ تم حذف "${station.name.length > 30 ? station.name.slice(0,27)+'…' : station.name}"`;
+  undoToast.classList.add('show');
+  if (undoTimeout) clearTimeout(undoTimeout);
+  undoTimeout = setTimeout(() => {
+    undoToast.classList.remove('show');
+    deletedItem = null;
+    deletedIndex = -1;
+  }, 5000);
+}
+
+undoBtn.onclick = () => {
+  if (deletedItem && deletedIndex !== -1) {
+    stations.splice(deletedIndex, 0, deletedItem);
+    save();
+    renderAllLists();
+    updateQuickFavsList();
+    if (currentIdx >= deletedIndex) currentIdx++;
+    loadStation(currentIdx, false);
+    toast('✅ تم استعادة الإذاعة');
+  }
+  undoToast.classList.remove('show');
+  if (undoTimeout) clearTimeout(undoTimeout);
+  deletedItem = null;
+  deletedIndex = -1;
+};
 
 // ========== CRUD ==========
 function openEditModal(idx) {
@@ -1297,16 +1417,9 @@ function openEditModal(idx) {
   document.getElementById('edit-modal').classList.add('open');
   window.editIdx = idx;
 }
-function deleteStation(idx) {
-  if (!confirm('حذف الإذاعة؟')) return;
-  stations.splice(idx, 1); save(); renderAllLists(); updateQuickFavs();
-  if (currentIdx === idx && stations.length) loadStation(0, false);
-  else if (currentIdx > idx) currentIdx--;
-  toast('تم الحذف');
-}
 function addStation(name, desc, url, thumb, status) {
   stations.push({ name, description: desc, url, thumb, status, fav: false });
-  save(); renderAllLists(); updateQuickFavs(); toast('تمت الإضافة');
+  save(); renderAllLists(); updateQuickFavsList(); toast('تمت الإضافة');
 }
 
 // ========== EVENT LISTENERS ==========
@@ -1320,7 +1433,7 @@ document.getElementById('save-edit').addEventListener('click', () => {
     status: document.getElementById('edit-status').value,
     fav: stations[idx].fav
   };
-  save(); renderAllLists(); loadStation(currentIdx, false); updateQuickFavs();
+  save(); renderAllLists(); loadStation(currentIdx, false); updateQuickFavsList();
   document.getElementById('edit-modal').classList.remove('open');
   toast('تم التعديل');
 });
@@ -1360,8 +1473,8 @@ document.querySelectorAll('.filter-btn, .filter-tab').forEach(btn => {
   });
 });
 document.getElementById('mobile-search').addEventListener('input', (e) => { searchQuery = e.target.value; renderMobileList(); });
-document.getElementById('reset-btn')?.addEventListener('click', () => { if (confirm('استعادة الافتراضي؟')) { stations = JSON.parse(JSON.stringify(DEFAULT_STATIONS)); save(); renderAllLists(); loadStation(0); updateQuickFavs(); } });
-document.getElementById('mob-reset')?.addEventListener('click', () => { if (confirm('استعادة الافتراضي؟')) { stations = JSON.parse(JSON.stringify(DEFAULT_STATIONS)); save(); renderAllLists(); loadStation(0); updateQuickFavs(); } });
+document.getElementById('reset-btn')?.addEventListener('click', () => { if (confirm('استعادة الافتراضي؟')) { stations = JSON.parse(JSON.stringify(DEFAULT_STATIONS)); save(); renderAllLists(); loadStation(0); updateQuickFavsList(); } });
+document.getElementById('mob-reset')?.addEventListener('click', () => { if (confirm('استعادة الافتراضي؟')) { stations = JSON.parse(JSON.stringify(DEFAULT_STATIONS)); save(); renderAllLists(); loadStation(0); updateQuickFavsList(); } });
 document.getElementById('export-file-btn')?.addEventListener('click', () => { const a = document.createElement('a'); a.href = 'data:application/json,' + encodeURIComponent(JSON.stringify(stations)); a.download = 'quran_radios.json'; a.click(); });
 document.getElementById('mob-export')?.addEventListener('click', () => { const a = document.createElement('a'); a.href = 'data:application/json,' + encodeURIComponent(JSON.stringify(stations)); a.download = 'quran_radios.json'; a.click(); });
 function openDataModal(importing) {
@@ -1371,7 +1484,7 @@ function openDataModal(importing) {
   document.getElementById('data-modal').classList.add('open');
   document.getElementById('process-data').onclick = () => {
     if (importing) {
-      try { const arr = JSON.parse(ta.value); if (Array.isArray(arr)) { stations = arr; save(); renderAllLists(); loadStation(0); updateQuickFavs(); toast('تم الاستيراد'); } else throw new Error(); } catch (e) { toast('JSON غير صالح'); }
+      try { const arr = JSON.parse(ta.value); if (Array.isArray(arr)) { stations = arr; save(); renderAllLists(); loadStation(0); updateQuickFavsList(); toast('تم الاستيراد'); } else throw new Error(); } catch (e) { toast('JSON غير صالح'); }
     } else { ta.select(); document.execCommand('copy'); toast('تم النسخ'); }
     document.getElementById('data-modal').classList.remove('open');
   };
@@ -1379,13 +1492,19 @@ function openDataModal(importing) {
 document.getElementById('import-btn')?.addEventListener('click', () => openDataModal(true));
 document.getElementById('mob-import')?.addEventListener('click', () => openDataModal(true));
 document.getElementById('mob-share-app')?.addEventListener('click', () => { window.open('https://github.com/SalehGNUTUX/GT_QURANRADIO', '_blank'); });
+document.getElementById('mob-share-station')?.addEventListener('click', () => {
+  const s = stations[currentIdx];
+  if (navigator.share) navigator.share({ title: s.name, text: s.description, url: s.url });
+  else navigator.clipboard?.writeText(s.url);
+  toast('تم نسخ رابط الإذاعة');
+});
 document.getElementById('close-data-modal').addEventListener('click', () => document.getElementById('data-modal').classList.remove('open'));
 document.getElementById('action-edit').addEventListener('click', () => {
   if (pendingStationIdx !== null) { openEditModal(pendingStationIdx); pendingStationIdx = null; }
   document.getElementById('action-sheet').classList.remove('open');
 });
 document.getElementById('action-delete').addEventListener('click', () => {
-  if (pendingStationIdx !== null) { deleteStation(pendingStationIdx); pendingStationIdx = null; }
+  if (pendingStationIdx !== null) { deleteStationWithUndo(pendingStationIdx); pendingStationIdx = null; }
   document.getElementById('action-sheet').classList.remove('open');
 });
 document.getElementById('action-cancel').addEventListener('click', () => document.getElementById('action-sheet').classList.remove('open'));
@@ -1402,8 +1521,6 @@ document.getElementById('desk-prev').addEventListener('click', () => loadStation
 document.getElementById('desk-next').addEventListener('click', () => loadStation(currentIdx + 1));
 document.getElementById('mobile-prev').addEventListener('click', () => loadStation(currentIdx - 1));
 document.getElementById('mobile-next').addEventListener('click', () => loadStation(currentIdx + 1));
-document.getElementById('desk-prev-track')?.addEventListener('click', () => loadStation(currentIdx - 1));
-document.getElementById('desk-next-track')?.addEventListener('click', () => loadStation(currentIdx + 1));
 document.getElementById('desk-mini-prev').addEventListener('click', () => loadStation(currentIdx - 1));
 document.getElementById('desk-mini-next').addEventListener('click', () => loadStation(currentIdx + 1));
 document.getElementById('desk-mini-play').addEventListener('click', togglePlay);
@@ -1412,11 +1529,7 @@ document.getElementById('mobile-play').addEventListener('click', togglePlay);
 document.getElementById('desk-volume').addEventListener('input', (e) => audio.volume = +e.target.value);
 document.getElementById('mobile-volume-slider').addEventListener('input', (e) => audio.volume = +e.target.value);
 // Mute buttons
-function setMuteButton(btn, isMuted) {
-  if (!btn) return;
-  if (isMuted) btn.innerHTML = '<i class="fas fa-volume-mute"></i>';
-  else btn.innerHTML = '<i class="fas fa-volume-up"></i>';
-}
+function setMuteButton(btn, isMuted) { if (btn) btn.innerHTML = isMuted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>'; }
 let isMuted = false;
 let previousVolume = 0.7;
 function toggleMute() {
@@ -1428,27 +1541,20 @@ function toggleMute() {
     audio.volume = 0;
     isMuted = true;
   }
-  const deskMute = document.getElementById('desk-mute-btn');
-  const mobMute = document.getElementById('mobile-mute-btn');
-  setMuteButton(deskMute, isMuted);
-  setMuteButton(mobMute, isMuted);
-  if (!isMuted && audio.volume > 0) {
-    document.getElementById('desk-volume').value = audio.volume;
-    document.getElementById('mobile-volume-slider').value = audio.volume;
-  } else if (isMuted) {
-    document.getElementById('desk-volume').value = 0;
-    document.getElementById('mobile-volume-slider').value = 0;
-  }
+  setMuteButton(document.getElementById('desk-mute-btn'), isMuted);
+  setMuteButton(document.getElementById('mobile-mute-btn'), isMuted);
+  if (!isMuted && audio.volume > 0) { document.getElementById('desk-volume').value = audio.volume; document.getElementById('mobile-volume-slider').value = audio.volume; }
+  else if (isMuted) { document.getElementById('desk-volume').value = 0; document.getElementById('mobile-volume-slider').value = 0; }
 }
 document.getElementById('desk-mute-btn').addEventListener('click', toggleMute);
 document.getElementById('mobile-mute-btn').addEventListener('click', toggleMute);
 document.getElementById('desk-progress-track')?.addEventListener('click', (e) => { if (audio.duration) audio.currentTime = (e.offsetX / e.target.clientWidth) * audio.duration; });
 document.getElementById('mobile-progress-track').addEventListener('click', (e) => { if (audio.duration) audio.currentTime = (e.offsetX / e.target.clientWidth) * audio.duration; });
 document.getElementById('desk-edit').addEventListener('click', () => openEditModal(currentIdx));
-document.getElementById('desk-delete').addEventListener('click', () => deleteStation(currentIdx));
+document.getElementById('desk-delete').addEventListener('click', () => deleteStationWithUndo(currentIdx));
 document.getElementById('menu-toggle').addEventListener('click', () => document.getElementById('actions-menu').classList.toggle('show'));
 
-// Mobile swipe gesture (upper half = change station, lower half = volume)
+// Mobile swipe gesture
 let touchStartX = 0, touchStartY = 0, isVolSwipe = false;
 const mobilePlayerPage = document.getElementById('mobile-player-page');
 if (mobilePlayerPage) {
@@ -1488,7 +1594,7 @@ window.addEventListener('DOMContentLoaded', () => {
   if (mainCanvas) { resizeCanvases(); window.addEventListener('resize', resizeCanvases); }
   loadStation(currentIdx, false);
   renderAllLists();
-  updateQuickFavs();
+  updateQuickFavsList();
   startViz();
   document.addEventListener('click', () => { userActed = true; initAudioCtx(); }, { once: true });
 });
