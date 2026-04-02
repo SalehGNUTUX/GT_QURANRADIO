@@ -102,6 +102,8 @@
 ---
 
 ## 📁 هيكل المشروع
+```bash
+
 GT_QURANRADIO/
 ├── index.html # صفحة الإصدارات الرئيسية
 ├── app/
@@ -121,10 +123,8 @@ GT_QURANRADIO/
 ├── android/ # مشروع Android (لـ Capacitor)
 └── output/ # مخرجات البناء
 
-text
-
 ---
-
+```
 ## 🚀 كيفية الاستخدام
 
 ### 🌐 **عبر الإنترنت (PWA)**
