@@ -2,20 +2,20 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
   <title>الإصدار 2.1 | مشغل الإذاعات القرآنية</title>
   <meta name="description" content="مشغل الإذاعات القرآنية – تطبيق ويب تقدمي (PWA) + تطبيق أندرويد + تطبيق لينكس. استمع إلى الإذاعات القرآنية من مختلف أنحاء العالم الإسلامي">
-  <meta name="keywords" content="القرآن, إذاعات قرآنية, مشغل قرآن, PWA, Android, Linux, AppImage, DEB">
+  <meta name="keywords" content="القرآن, إذاعات قرآنية, مشغل قرآن, PWA, Android, Linux, AppImage, DEB, Brave">
   <meta name="author" content="SalehGNUTUX">
   <meta name="theme-color" content="#0a1628">
-  
+
   <!-- Open Graph / Social Media -->
   <meta property="og:title" content="GT_QURANRADIO – الإصدار 2.1">
   <meta property="og:description" content="مشغل الإذاعات القرآنية – استمع إلى الإذاعات القرآنية على جميع المنصات">
   <meta property="og:image" content="https://github.com/SalehGNUTUX/GT_QURANRADIO/raw/main/GT-QR-icons/all/512x512/GT-QURANRADIO-LOGO.png">
   <meta property="og:url" content="https://salehgnutux.github.io/GT_QURANRADIO/">
   <meta property="og:type" content="website">
-  
+
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="GT_QURANRADIO – الإصدار 2.1">
@@ -28,52 +28,61 @@
       padding: 0;
       box-sizing: border-box;
     }
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(135deg, #0a142e 0%, #1a2a6c 100%);
       color: #fff;
       min-height: 100vh;
-      padding: 40px 20px;
+      padding: clamp(16px, 5vw, 40px);
     }
+
     .container {
-      max-width: 1000px;
+      max-width: 1200px;
       margin: 0 auto;
       background: rgba(0,0,0,0.45);
       backdrop-filter: blur(12px);
-      border-radius: 32px;
-      padding: 40px;
+      border-radius: clamp(20px, 5vw, 32px);
+      padding: clamp(20px, 5vw, 40px);
       border: 1px solid rgba(240,180,41,0.25);
       box-shadow: 0 20px 40px rgba(0,0,0,0.3);
     }
+
     h1 {
-      font-size: 2rem;
+      font-size: clamp(1.5rem, 6vw, 2rem);
       margin-bottom: 8px;
       color: #fdbb2d;
     }
+
     h2 {
-      font-size: 1.4rem;
+      font-size: clamp(1.2rem, 5vw, 1.4rem);
       margin: 28px 0 16px;
       padding-bottom: 8px;
       border-bottom: 2px solid rgba(240,180,41,0.4);
       color: #ffd166;
     }
+
     h3 {
-      font-size: 1.1rem;
+      font-size: clamp(1rem, 4vw, 1.1rem);
       margin: 20px 0 10px;
       color: #fdbb2d;
     }
+
     .logo {
       text-align: center;
       margin-bottom: 20px;
     }
+
     .logo img {
-      width: 100px;
-      height: 100px;
+      width: clamp(80px, 20vw, 100px);
+      height: clamp(80px, 20vw, 100px);
       border-radius: 20px;
       border: 2px solid #fdbb2d;
       transition: transform 0.3s;
     }
+
     .logo img:hover { transform: scale(1.05); }
+
     .badge {
       display: inline-block;
       background: rgba(240,180,41,0.2);
@@ -83,32 +92,85 @@
       font-size: 0.8rem;
       margin-bottom: 20px;
     }
-    .version-tag {
-      display: inline-block;
-      background: #1e3a8a;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.7rem;
-      margin-right: 8px;
+
+    /* Downloads Grid - Responsive with PWA first */
+    .downloads-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
     }
+
+    /* Ensure PWA card has visual priority */
+    .download-card:first-child {
+      border: 1px solid rgba(240,180,41,0.5);
+      background: rgba(0,0,0,0.4);
+    }
+
+    .download-card {
+      background: rgba(0,0,0,0.3);
+      border-radius: 20px;
+      padding: 20px 16px;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+
+    .download-card:hover { transform: translateY(-5px); }
+    .download-card i { font-size: 2.5rem; margin-bottom: 10px; display: block; }
+    .download-card .platform { font-weight: bold; font-size: 1rem; margin-bottom: 5px; }
+    .download-card .size { font-size: 0.7rem; opacity: 0.7; margin-bottom: 10px; }
+
+    /* Table - Responsive */
     .download-table {
       width: 100%;
       border-collapse: collapse;
       margin: 20px 0;
     }
+
     .download-table th, .download-table td {
-      padding: 14px 12px;
+      padding: 12px 8px;
       text-align: center;
       border-bottom: 1px solid rgba(255,255,255,0.1);
     }
+
     .download-table th {
       background: rgba(0,0,0,0.3);
       color: #fdbb2d;
       font-weight: 700;
     }
-    .download-table tr:hover td {
-      background: rgba(255,255,255,0.05);
+
+    /* Make table responsive on mobile */
+    @media (max-width: 600px) {
+      .download-table, .download-table tbody, .download-table tr, .download-table td, .download-table th {
+        display: block;
+      }
+      .download-table thead {
+        display: none;
+      }
+      .download-table tr {
+        margin-bottom: 12px;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
+        padding: 10px;
+      }
+      .download-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+      }
+      .download-table td:last-child {
+        border-bottom: none;
+      }
+      .download-table td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #fdbb2d;
+        margin-left: 10px;
+      }
     }
+
     .btn {
       display: inline-flex;
       align-items: center;
@@ -120,18 +182,24 @@
       text-decoration: none;
       font-weight: bold;
       transition: all 0.2s;
+      font-size: 0.9rem;
     }
+
     .btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 15px rgba(253,187,45,0.4);
     }
+
     .btn-small {
       padding: 6px 12px;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
     }
+
+    .btn-pwa { background: linear-gradient(135deg, #4285f4, #34a853); color: white; }
     .btn-android { background: linear-gradient(135deg, #3ddc84, #2e9c5a); color: white; }
     .btn-linux { background: linear-gradient(135deg, #fcc624, #e6a700); color: #1a2a6c; }
-    .btn-web { background: linear-gradient(135deg, #4285f4, #34a853); color: white; }
+    .btn-brave { background: linear-gradient(135deg, #ff7b00, #fb5f00); color: white; }
+
     .status-badge {
       display: inline-block;
       padding: 4px 12px;
@@ -140,98 +208,121 @@
       font-weight: bold;
     }
     .status-working { background: #2e7d32; color: #fff; }
-    .status-partial { background: #ed6c02; color: #fff; }
     .status-not-working { background: #c62828; color: #fff; }
-    .status-fixed { background: #2e7d32; color: #fff; }
+
     .features-list {
       list-style: none;
       padding: 0;
     }
+
     .features-list li {
       padding: 10px 0;
       border-bottom: 1px solid rgba(255,255,255,0.05);
       display: flex;
       align-items: center;
       gap: 12px;
+      flex-wrap: wrap;
     }
+
     .features-list li i {
       width: 28px;
       font-size: 1.1rem;
       color: #fdbb2d;
+      flex-shrink: 0;
     }
+
     .code-block {
       background: rgba(0,0,0,0.5);
       border-radius: 12px;
       padding: 16px;
       font-family: monospace;
-      font-size: 0.85rem;
+      font-size: clamp(0.7rem, 3vw, 0.85rem);
       overflow-x: auto;
       margin: 16px 0;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
+
     .changelog {
       background: rgba(0,0,0,0.3);
       border-radius: 16px;
       padding: 20px;
       margin: 20px 0;
     }
+
     .changelog-item {
       padding: 10px 0;
       border-bottom: 1px solid rgba(255,255,255,0.08);
     }
     .changelog-item:last-child { border-bottom: none; }
+
     .badge-new {
       background: #2e7d32;
       padding: 2px 8px;
       border-radius: 20px;
       font-size: 0.7rem;
       margin-left: 10px;
+      display: inline-block;
     }
+
     .badge-fixed {
       background: #1e3a8a;
       padding: 2px 8px;
       border-radius: 20px;
       font-size: 0.7rem;
       margin-left: 10px;
+      display: inline-block;
     }
+
+    .brave-section {
+      background: linear-gradient(135deg, rgba(255,123,0,0.1), rgba(251,95,0,0.05));
+      border: 1px solid rgba(255,123,0,0.3);
+      border-radius: 24px;
+      padding: 20px;
+      margin: 24px 0;
+    }
+
+    .brave-section h3 {
+      color: #ff7b00;
+      margin-top: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
     footer {
       text-align: center;
       margin-top: 40px;
       padding-top: 20px;
       border-top: 1px solid rgba(255,255,255,0.1);
-      font-size: 0.8rem;
+      font-size: clamp(0.7rem, 3vw, 0.8rem);
       color: rgba(255,255,255,0.5);
     }
+
     hr {
       border: none;
       height: 1px;
       background: rgba(255,255,255,0.1);
       margin: 20px 0;
     }
-    .downloads-grid {
-      display: flex;
-      gap: 15px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin: 20px 0;
-    }
-    .download-card {
-      background: rgba(0,0,0,0.3);
-      border-radius: 20px;
-      padding: 20px;
-      text-align: center;
-      min-width: 180px;
-      flex: 1;
-      transition: transform 0.2s;
-    }
-    .download-card:hover { transform: translateY(-5px); }
-    .download-card i { font-size: 2.5rem; margin-bottom: 10px; display: block; }
-    .download-card .platform { font-weight: bold; font-size: 1.1rem; margin-bottom: 5px; }
-    .download-card .size { font-size: 0.7rem; opacity: 0.7; margin-bottom: 10px; }
-    @media (max-width: 600px) {
-      .container { padding: 24px; }
-      h1 { font-size: 1.6rem; }
-      .download-table th, .download-table td { padding: 8px; font-size: 0.8rem; }
-      .download-card { min-width: 140px; padding: 15px; }
+
+    /* Responsive adjustments */
+    @media (max-width: 480px) {
+      .downloads-grid {
+        grid-template-columns: 1fr;
+      }
+      .download-card {
+        padding: 16px;
+      }
+      .features-list li {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .changelog-item strong {
+        display: inline-block;
+        margin-bottom: 6px;
+      }
     }
   </style>
 </head>
@@ -251,51 +342,71 @@
     <span class="badge">🌐 PWA</span>
   </div>
 
-  <!-- Quick Downloads -->
-  <h2>📦 التحميلات</h2>
+  <!-- Quick Downloads - PWA is FIRST -->
+  <h2>📦 التنزيلات</h2>
   <div class="downloads-grid">
+    <div class="download-card">
+      <i class="fas fa-globe" style="color:#4285f4;"></i>
+      <div class="platform">🌟 PWA / Web</div>
+      <div class="size">مباشر</div>
+      <a href="https://salehgnutux.github.io/GT_QURANRADIO/app/" class="btn btn-small btn-pwa">▶️ استخدام مباشر</a>
+    </div>
     <div class="download-card">
       <i class="fab fa-android" style="color:#3ddc84;"></i>
       <div class="platform">Android APK</div>
       <div class="size">5.85 MB</div>
-      <a href="https://github.com/SalehGNUTUX/GT_QURANRADIO/releases/download/QuranRadio-v2.1.0/QuranRadio-v2.1.0-debug.apk" class="btn btn-small btn-android">⬇️ تحميل APK</a>
+      <a href="https://github.com/SalehGNUTUX/GT_QURANRADIO/releases/download/QuranRadio-v2.1.0/QuranRadio-v2.1.0-debug.apk" class="btn btn-small btn-android">⬇️ تنزيل APK</a>
     </div>
     <div class="download-card">
       <i class="fab fa-linux" style="color:#fcc624;"></i>
       <div class="platform">Linux AppImage</div>
-      <div class="size">~101 MB</div>
-      <a href="https://github.com/SalehGNUTUX/GT_QURANRADIO/releases/download/QuranRadio-v2.1.0/QuranRadio-2.1.0-linux.AppImage" class="btn btn-small btn-linux">⬇️ تحميل AppImage</a>
+      <div class="size">101 MB</div>
+      <a href="https://github.com/SalehGNUTUX/GT_QURANRADIO/releases/download/QuranRadio-v2.1.0/QuranRadio-2.1.0-linux.AppImage" class="btn btn-small btn-linux">⬇️ تنزيل AppImage</a>
     </div>
     <div class="download-card">
       <i class="fab fa-ubuntu" style="color:#e6a700;"></i>
       <div class="platform">Linux DEB</div>
-      <div class="size">~70.5 MB</div>
-      <a href="https://github.com/SalehGNUTUX/GT_QURANRADIO/releases/download/QuranRadio-v2.1.0/QuranRadio-2.1.0-linux.deb" class="btn btn-small btn-linux">⬇️ تحميل DEB</a>
-    </div>
-    <div class="download-card">
-      <i class="fas fa-globe" style="color:#4285f4;"></i>
-      <div class="platform">PWA / Web</div>
-      <div class="size">مباشر</div>
-      <a href="https://salehgnutux.github.io/GT_QURANRADIO/app/" class="btn btn-small btn-web">▶️ تشغيل مباشر</a>
+      <div class="size">70.5 MB</div>
+      <a href="https://github.com/SalehGNUTUX/GT_QURANRADIO/releases/download/QuranRadio-v2.1.0/QuranRadio-2.1.0-linux.deb" class="btn btn-small btn-linux">⬇️ تنزيل DEB</a>
     </div>
   </div>
 
-  <!-- Detailed Downloads Table -->
+  <!-- Detailed Downloads Table with PWA first -->
   <table class="download-table">
     <thead>
-      <tr><th>المنصة</th><th>الإصدار</th><th>الحجم</th><th>الرابط</th></tr>
+      <tr><th>المنصة</th><th>الإصدار</th><th>الحجم</th><th>التنزيل</th></tr>
     </thead>
     <tbody>
-      <tr><td>🌐 النسخة المباشرة (PWA)</td><td>v2.1</td><td>–</td><td><a href="https://salehgnutux.github.io/GT_QURANRADIO/app/" class="btn-small" style="background:#4285f4; color:white; padding:6px 12px; border-radius:40px; text-decoration:none;">▶️ تشغيل مباشر</a></td></tr>
-      <tr><td>🤖 تطبيق أندرويد (APK)</td><td>v2.1.0-debug</td><td><strong>5.85 MB</strong></td><td><a href="https://github.com/SalehGNUTUX/GT_QURANRADIO/releases/download/QuranRadio-v2.1.0/QuranRadio-v2.1.0-debug.apk" class="btn-small" style="background:#3ddc84; color:#1a2a6c; padding:6px 12px; border-radius:40px; text-decoration:none;">⬇️ تحميل APK</a></td></tr>
-      <tr><td>🐧 Linux (AppImage)</td><td>v2.1.0</td><td>~75 MB</td><td><a href="https://github.com/SalehGNUTUX/GT_QURANRADIO/releases/download/QuranRadio-v2.1.0/QuranRadio-2.1.0-linux.AppImage" class="btn-small" style="background:#fcc624; color:#1a2a6c; padding:6px 12px; border-radius:40px; text-decoration:none;">⬇️ تحميل AppImage</a></td></tr>
-      <tr><td>🐧 Linux (DEB)</td><td>v2.1.0</td><td>~65 MB</td><td><a href="https://github.com/SalehGNUTUX/GT_QURANRADIO/releases/download/QuranRadio-v2.1.0/QuranRadio-2.1.0-linux.deb" class="btn-small" style="background:#fcc624; color:#1a2a6c; padding:6px 12px; border-radius:40px; text-decoration:none;">⬇️ تحميل DEB</a></td></tr>
+      <tr>
+        <td data-label="المنصة">🌐 <strong>النسخة المباشرة (PWA)</strong></td>
+        <td data-label="الإصدار">v2.1</td>
+        <td data-label="الحجم">–</td>
+        <td data-label="التنزيل"><a href="https://salehgnutux.github.io/GT_QURANRADIO/app/" class="btn-small" style="background:#4285f4; color:white; padding:6px 12px; border-radius:40px; text-decoration:none; font-size:0.75rem;">🌟 استخدام مباشر</a></td>
+      </tr>
+      <tr>
+        <td data-label="المنصة">🤖 Android APK</td>
+        <td data-label="الإصدار">v2.1.0-debug</td>
+        <td data-label="الحجم"><strong>5.85 MB</strong></td>
+        <td data-label="التنزيل"><a href="https://github.com/SalehGNUTUX/GT_QURANRADIO/releases/download/QuranRadio-v2.1.0/QuranRadio-v2.1.0-debug.apk" class="btn-small" style="background:#3ddc84; color:#1a2a6c; padding:6px 12px; border-radius:40px; text-decoration:none; font-size:0.75rem;">⬇️ تنزيل APK</a></td>
+      </tr>
+      <tr>
+        <td data-label="المنصة">🐧 Linux AppImage</td>
+        <td data-label="الإصدار">v2.1.0</td>
+        <td data-label="الحجم"><strong>101 MB</strong></td>
+        <td data-label="التنزيل"><a href="https://github.com/SalehGNUTUX/GT_QURANRADIO/releases/download/QuranRadio-v2.1.0/QuranRadio-2.1.0-linux.AppImage" class="btn-small" style="background:#fcc624; color:#1a2a6c; padding:6px 12px; border-radius:40px; text-decoration:none; font-size:0.75rem;">⬇️ تنزيل AppImage</a></td>
+      </tr>
+      <tr>
+        <td data-label="المنصة">🐧 Linux DEB</td>
+        <td data-label="الإصدار">v2.1.0</td>
+        <td data-label="الحجم"><strong>70.5 MB</strong></td>
+        <td data-label="التنزيل"><a href="https://github.com/SalehGNUTUX/GT_QURANRADIO/releases/download/QuranRadio-v2.1.0/QuranRadio-2.1.0-linux.deb" class="btn-small" style="background:#fcc624; color:#1a2a6c; padding:6px 12px; border-radius:40px; text-decoration:none; font-size:0.75rem;">⬇️ تنزيل DEB</a></td>
+      </tr>
     </tbody>
   </table>
 
   <!-- What's New -->
   <h2>✨ ما الجديد في الإصدار 2.1؟</h2>
-  
+
   <div class="changelog">
     <div class="changelog-item">
       <i class="fas fa-heart" style="color:#ff5e5e;"></i>
@@ -362,10 +473,27 @@
   <table style="width:100%; margin:16px 0;">
     <tr><td style="padding:8px;">🎵 التشغيل في الخلفية (Background Audio)</td><td><span class="status-badge status-not-working">❌ لا يعمل</span></td></tr>
     <tr><td style="padding:8px;">🔔 إشعارات شاشة القفل (MediaSession)</td><td><span class="status-badge status-not-working">❌ لا يعمل</span></td></tr>
-   </table>
+    </table>
   <p style="background:rgba(198,40,40,0.2); padding:12px; border-radius:12px; font-size:0.9rem;">
     ⚠️ <strong>ملاحظة</strong>: العمل في الخلفية وإشعارات شاشة القفل من الميزات المخطط لها في الإصدارات القادمة (2.2). حالياً، يستمر التطبيق بالعمل فقط عند فتحه على الشاشة.
   </p>
+
+  <!-- Brave Browser Recommendation -->
+  <div class="brave-section">
+    <h3><i class="fab fa-brave"></i> 💎 نصيحة المطور: استخدم متصفح Brave</h3>
+    <p style="margin: 10px 0;">لتحصل على أفضل تجربة للمشغل على الهاتف، ننصح بشدة باستخدام متصفح <strong>Brave</strong>، حيث يتيح لك:</p>
+    <ul style="margin-right: 20px; line-height: 1.8;">
+      <li>✅ <strong>تشغيل الصوت في الخلفية</strong> – يمكنك إغلاق المتصفح أو قفل الشاشة مع استمرار الاستماع للإذاعة.</li>
+      <li>✅ <strong>منع الإعلانات والمتتبعات</strong> – تصفح أنظف وأسرع دون مقاطعات.</li>
+      <li>✅ <strong>توفير استهلاك البطارية والبيانات</strong> – تقنية حظر الإعلانات المدمجة توفر موارد جهازك.</li>
+      <li>✅ <strong>خصوصية محسنة</strong> – حماية تلقائية من الإعلانات الضارة والتتبعات.</li>
+    </ul>
+    <div style="margin-top: 15px;">
+      <a href="https://brave.com/" target="_blank" rel="noopener noreferrer" class="btn btn-brave" style="display: inline-flex; align-items: center; gap: 8px;">
+        <i class="fab fa-brave"></i> تنزيل متصفح Brave مجاناً
+      </a>
+    </div>
+  </div>
 
   <!-- Full Features -->
   <h2>🎨 المميزات الكاملة</h2>
@@ -407,7 +535,7 @@
   <ul class="features-list">
     <li><i class="fab fa-android"></i> <strong>Android:</strong> الإصدار 8.0 (API 26) أو أحدث</li>
     <li><i class="fab fa-linux"></i> <strong>Linux:</strong> أي توزيعة حديثة (Ubuntu 20.04+, Fedora 34+, Arch)</li>
-    <li><i class="fas fa-globe"></i> <strong>PWA:</strong> متصفح حديث (Chrome, Firefox, Edge, Safari)</li>
+    <li><i class="fas fa-globe"></i> <strong>PWA / Web:</strong> متصفح حديث (يُفضل Brave للتشغيل في الخلفية)</li>
   </ul>
 
   <!-- Footer -->
