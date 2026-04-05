@@ -1,35 +1,116 @@
 {
-  "name": "مشغّل الإذاعات القرآنية",
+  "name": "GT_QURANRADIO – مشغل الإذاعات القرآنية",
   "short_name": "Quran Radio",
-  "description": "استمع إلى الإذاعات القرآنية من حول العالم",
+  "description": "مشغل الإذاعات القرآنية – تطبيق ويب تقدمي + تطبيق أندرويد + تطبيق لينكس. استمع إلى الإذاعات القرآنية من مختلف أنحاء العالم الإسلامي",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
   "theme_color": "#0a1628",
   "background_color": "#0a1628",
-  "categories": ["music", "education", "lifestyle"],
   "lang": "ar",
   "dir": "rtl",
+  "categories": ["music", "education", "lifestyle", "religion"],
   "icons": [
-    { "src": "GT-QR-icons/all/72x72/GT-QURANRADIO-LOGO.png",   "sizes": "72x72",   "type": "image/png", "purpose": "any" },
-    { "src": "GT-QR-icons/all/96x96/GT-QURANRADIO-LOGO.png",   "sizes": "96x96",   "type": "image/png", "purpose": "any" },
-    { "src": "GT-QR-icons/all/128x128/GT-QURANRADIO-LOGO.png", "sizes": "128x128", "type": "image/png", "purpose": "any" },
-    { "src": "GT-QR-icons/all/144x144/GT-QURANRADIO-LOGO.png", "sizes": "144x144", "type": "image/png", "purpose": "any" },
-    { "src": "GT-QR-icons/all/152x152/GT-QURANRADIO-LOGO.png", "sizes": "152x152", "type": "image/png", "purpose": "any" },
-    { "src": "GT-QR-icons/all/180x180/GT-QURANRADIO-LOGO.png", "sizes": "180x180", "type": "image/png", "purpose": "any" },
-    { "src": "GT-QR-icons/all/192x192/GT-QURANRADIO-LOGO.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
-    { "src": "GT-QR-icons/all/384x384/GT-QURANRADIO-LOGO.png", "sizes": "384x384", "type": "image/png", "purpose": "any" },
-    { "src": "GT-QR-icons/all/512x512/GT-QURANRADIO-LOGO.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
-    { "src": "GT-QR-icons/all/1024x1024/GT-QURANRADIO-LOGO.png", "sizes": "1024x1024", "type": "image/png", "purpose": "any" }
+    {
+      "src": "GT-QR-icons/all/72x72/GT-QURANRADIO-LOGO.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "GT-QR-icons/all/96x96/GT-QURANRADIO-LOGO.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "GT-QR-icons/all/128x128/GT-QURANRADIO-LOGO.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "GT-QR-icons/all/144x144/GT-QURANRADIO-LOGO.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "GT-QR-icons/all/152x152/GT-QURANRADIO-LOGO.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "GT-QR-icons/all/180x180/GT-QURANRADIO-LOGO.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "GT-QR-icons/all/192x192/GT-QURANRADIO-LOGO.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "GT-QR-icons/all/256x256/GT-QURANRADIO-LOGO.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "GT-QR-icons/all/384x384/GT-QURANRADIO-LOGO.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "GT-QR-icons/all/512x512/GT-QURANRADIO-LOGO.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "GT-QR-icons/all/1024x1024/GT-QURANRADIO-LOGO.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any"
+    }
   ],
+  "screenshots": [],
   "shortcuts": [
     {
-      "name": "تشغيل سريع",
-      "short_name": "تشغيل",
-      "description": "تشغيل الإذاعة مباشرة",
-      "url": "./?action=play",
-      "icons": [{ "src": "GT-QR-icons/all/96x96/GT-QURANRADIO-LOGO.png", "sizes": "96x96" }]
+      "name": "فتح المشغل",
+      "short_name": "المشغل",
+      "description": "الانتقال إلى مشغل الإذاعات القرآنية",
+      "url": "./app/",
+      "icons": [
+        {
+          "src": "GT-QR-icons/all/96x96/GT-QURANRADIO-LOGO.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "الإصدار 2.1",
+      "short_name": "الإصدار",
+      "description": "معلومات الإصدار والتحميلات",
+      "url": "./",
+      "icons": [
+        {
+          "src": "GT-QR-icons/all/96x96/GT-QURANRADIO-LOGO.png",
+          "sizes": "96x96"
+        }
+      ]
     }
-  ]
+  ],
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://github.com/SalehGNUTUX/GT_QURANRADIO/releases/download/QuranRadio-v2.1.0/QuranRadio-v2.1.0-debug.apk"
+    }
+  ],
+  "prefer_related_applications": false
 }
