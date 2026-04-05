@@ -1,113 +1,140 @@
-/* ════════════════════════════════════════════
-   GT-QURANRADIO  Service Worker  v2.0
-   Quran Radio PWA – GNUTUX
-════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   GT-QURANRADIO v2.1 – Service Worker (صفحة الإصدارات)
+   Copyright (C) 2026 SalehGNUTUX | GPL-3.0
+   https://github.com/SalehGNUTUX/GT_QURANRADIO
+═══════════════════════════════════════════════════════════════ */
 
-const CACHE_NAME    = 'qr-v2';
-const RUNTIME_CACHE = 'qr-runtime-v2';
+const CACHE_NAME = 'qr-release-v1';
+const RUNTIME_CACHE = 'qr-release-runtime-v1';
 
-// Core assets to pre-cache on install
+// الملفات الأساسية للتخزين المسبق (صفحة الإصدارات فقط)
 const PRECACHE_URLS = [
   './',
   './index.html',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
-  'https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap'
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
 ];
 
-// ── Install: pre-cache shell ──
+// تثبيت الـ Service Worker وتخزين الملفات الأساسية
 self.addEventListener('install', event => {
+  console.log('[SW] تثبيت Service Worker لإصدار 2.1');
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(PRECACHE_URLS))
+      .then(cache => {
+        console.log('[SW] تخزين الملفات الأساسية');
+        return cache.addAll(PRECACHE_URLS);
+      })
       .then(() => self.skipWaiting())
   );
 });
 
-// ── Activate: clean up old caches ──
+// تنشيط الـ Service Worker وحذف الكاش القديم
 self.addEventListener('activate', event => {
-  const keep = [CACHE_NAME, RUNTIME_CACHE];
+  console.log('[SW] تنشيط Service Worker');
+  const cacheWhitelist = [CACHE_NAME, RUNTIME_CACHE];
   event.waitUntil(
-    caches.keys()
-      .then(keys => Promise.all(
-        keys.filter(k => !keep.includes(k)).map(k => caches.delete(k))
-      ))
-      .then(() => self.clients.claim())
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (!cacheWhitelist.includes(cacheName)) {
+            console.log('[SW] حذف الكاش القديم:', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    }).then(() => self.clients.claim())
   );
 });
 
-// ── Fetch: Network-first for audio streams, Cache-first for assets ──
+// استراتيجية التحميل: Network First للملفات الأساسية، Cache First للأصول الثابتة
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
-
-  // Skip non-GET and cross-origin audio streams (let them pass through)
-  if (event.request.method !== 'GET') return;
-
-  // Audio streams: always network (never cache)
-  const audioExts = ['.mp3', '.aac', '.ogg', '.m3u8', '.ts', '.opus'];
-  if (audioExts.some(ext => url.pathname.endsWith(ext)) || url.port === '8005' || url.port === '8196' || url.port === '8440') {
-    return; // pass through to network
+  
+  // تجاهل طلبات التحليلات والإعلانات
+  if (url.hostname.includes('analytics') || url.hostname.includes('google')) {
+    return;
   }
-
-  // For same-origin HTML – network first, fallback to cache
-  if (url.origin === self.location.origin && url.pathname.endsWith('.html')) {
+  
+  // طلبات HTML (صفحة الإصدارات) - Network First
+  if (url.pathname === '/' || url.pathname.endsWith('.html')) {
     event.respondWith(
       fetch(event.request)
-        .then(res => {
-          const clone = res.clone();
-          caches.open(CACHE_NAME).then(c => c.put(event.request, clone));
-          return res;
+        .then(response => {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, responseClone);
+          });
+          return response;
         })
-        .catch(() => caches.match(event.request))
+        .catch(() => {
+          return caches.match(event.request);
+        })
     );
     return;
   }
-
-  // For fonts & CDN assets – cache first, then network
-  if (url.origin !== self.location.origin || url.pathname.match(/\.(woff2?|ttf|eot|css|png|ico|svg|webp|jpg|jpeg)$/)) {
+  
+  // الملفات الثابتة (CSS, JS, Fonts, Icons) - Cache First
+  if (url.pathname.match(/\.(css|js|woff2?|ttf|eot|png|ico|svg|jpg|jpeg|webp)$/)) {
     event.respondWith(
-      caches.match(event.request).then(cached => {
-        if (cached) return cached;
-        return fetch(event.request).then(res => {
-          if (!res || res.status !== 200 || res.type === 'error') return res;
-          const clone = res.clone();
-          caches.open(RUNTIME_CACHE).then(c => c.put(event.request, clone));
-          return res;
-        });
-      })
+      caches.match(event.request)
+        .then(cachedResponse => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          return fetch(event.request).then(response => {
+            if (!response || response.status !== 200) {
+              return response;
+            }
+            const responseClone = response.clone();
+            caches.open(RUNTIME_CACHE).then(cache => {
+              cache.put(event.request, responseClone);
+            });
+            return response;
+          });
+        })
     );
     return;
   }
+  
+  // الطلبات الأخرى (مثل الصور الخارجية) - تمرير مباشر
+  return;
+});
 
-  // Default: network with cache fallback
-  event.respondWith(
-    fetch(event.request)
-      .then(res => {
-        const clone = res.clone();
-        caches.open(RUNTIME_CACHE).then(c => c.put(event.request, clone));
-        return res;
-      })
-      .catch(() => caches.match(event.request))
+// إشعارات الدفع (للإصدارات المستقبلية)
+self.addEventListener('push', event => {
+  if (!event.data) return;
+  
+  const data = event.data.json().catch(() => ({ title: 'GT_QURANRADIO', body: event.data.text() }));
+  
+  event.waitUntil(
+    data.then(d => {
+      self.registration.showNotification(d.title || 'GT_QURANRADIO', {
+        body: d.body || 'الإصدار 2.1 متاح الآن!',
+        icon: 'GT-QR-icons/all/192x192/GT-QURANRADIO-LOGO.png',
+        badge: 'GT-QR-icons/all/96x96/GT-QURANRADIO-LOGO.png',
+        dir: 'rtl',
+        lang: 'ar',
+        data: { url: d.url || '/' }
+      });
+    })
   );
 });
 
-// ── Background Sync placeholder ──
-self.addEventListener('sync', event => {
-  if (event.tag === 'sync-stations') {
-    // Reserved for future use
-  }
-});
-
-// ── Push notifications placeholder ──
-self.addEventListener('push', event => {
-  if (!event.data) return;
-  const data = event.data.json().catch(() => ({ title: 'Quran Radio', body: event.data.text() }));
+// فتح الرابط عند النقر على الإشعار
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  const urlToOpen = event.notification.data?.url || '/';
+  
   event.waitUntil(
-    data.then(d => self.registration.showNotification(d.title || 'Quran Radio', {
-      body: d.body || '',
-      icon: './GT-QR-icons/all/192x192/GT-QURANRADIO-LOGO.png',
-      badge: './GT-QR-icons/all/96x96/GT-QURANRADIO-LOGO.png',
-      dir: 'rtl',
-      lang: 'ar'
-    }))
+    clients.matchAll({ type: 'window', includeUncontrolled: true })
+      .then(windowClients => {
+        for (let client of windowClients) {
+          if (client.url === urlToOpen && 'focus' in client) {
+            return client.focus();
+          }
+        }
+        if (clients.openWindow) {
+          return clients.openWindow(urlToOpen);
+        }
+      })
   );
 });
